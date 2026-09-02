@@ -2,1211 +2,1180 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FGTGRAM — Mạng xã hội ẩn danh</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #06060b;
-      --bg-card: #0e0e16;
-      --bg-elevated: #15151f;
+      --bg: #08080e;
+      --card: #12121a;
+      --elevated: #1a1a25;
+      --border: #2a2a3a;
       --accent: #8b5cf6;
-      --accent-light: #a78bfa;
+      --accent2: #a78bfa;
       --cyan: #22d3ee;
-      --pink: #f472b6;
-      --text: #f8fafc;
+      --text: #f1f5f9;
       --muted: #94a3b8;
-      --border: rgba(139, 92, 246, 0.22);
-      --success: #34d399;
-      --danger: #f87171;
-      --radius: 16px;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --nav-h: 56px;
+      --bottom-h: 58px;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.65;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; overflow-x: hidden; line-height: 1.55;
     }
-    .bg-grid {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
-      background-size: 64px 64px;
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+      padding: 0.65rem 1.25rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+      border: none; cursor: pointer; font-family: inherit; transition: 0.2s;
     }
-    .orb {
-      position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.32; pointer-events: none; z-index: 0;
-      animation: drift 14s ease-in-out infinite;
-    }
-    .orb-1 { width: 520px; height: 520px; background: var(--accent); top: -180px; left: -120px; }
-    .orb-2 { width: 420px; height: 420px; background: var(--cyan); bottom: -140px; right: -100px; animation-delay: -5s; }
-    .orb-3 { width: 280px; height: 280px; background: var(--pink); top: 45%; left: 55%; animation-delay: -9s; }
-    @keyframes drift {
-      0%,100% { transform: translate(0,0) scale(1); }
-      33% { transform: translate(40px,-50px) scale(1.06); }
-      66% { transform: translate(-30px,25px) scale(0.94); }
-    }
+    .btn-primary { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; box-shadow: 0 4px 16px rgba(124,58,237,0.35); }
+    .btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+    .btn-ghost { background: var(--elevated); color: var(--text); }
+    .btn-ghost:hover { background: var(--border); }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .btn-sm { padding: 0.4rem 0.85rem; font-size: 0.82rem; }
+    .btn-block { width: 100%; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
     /* ===== LANDING ===== */
-    #landing { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
-    .nav {
+    #landing { min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+    .l-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse at 15% 15%, rgba(139,92,246,0.18), transparent 50%),
+        radial-gradient(ellipse at 85% 80%, rgba(34,211,238,0.1), transparent 50%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.28; pointer-events: none; z-index: 0;
+      animation: drift 16s ease-in-out infinite;
+    }
+    .o1 { width: 460px; height: 460px; background: #8b5cf6; top: -150px; left: -100px; }
+    .o2 { width: 360px; height: 360px; background: #22d3ee; bottom: -110px; right: -80px; animation-delay: -5s; }
+    .o3 { width: 240px; height: 240px; background: #f472b6; top: 45%; left: 55%; animation-delay: -10s; }
+    @keyframes drift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(30px,-40px) scale(1.05); }
+      66% { transform: translate(-20px,20px) scale(0.95); }
+    }
+    @keyframes fadeUp { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: none; } }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.4)} }
+
+    .nav-land {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1.35rem 5%; max-width: 1280px; margin: 0 auto; width: 100%;
+      padding: 1.1rem 5%; max-width: 1100px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 2;
     }
     .logo {
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.55rem; letter-spacing: -0.5px;
-      background: linear-gradient(135deg, var(--accent-light), var(--cyan));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      display: flex; align-items: center; gap: 0.45rem;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.4rem;
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px;
     }
-    .logo-icon { font-size: 1.7rem; -webkit-text-fill-color: initial; }
-    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
-    .nav-links a {
-      color: var(--muted); text-decoration: none; font-weight: 500; font-size: 0.95rem;
+    .nav-links-land { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links-land a {
+      color: var(--muted); text-decoration: none; font-weight: 500; font-size: 0.9rem;
       transition: color 0.25s; position: relative;
     }
-    .nav-links a:hover { color: var(--accent-light); }
-    .nav-links a::after {
-      content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+    .nav-links-land a:hover { color: var(--accent2); }
+    .nav-links-land a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
       background: var(--accent); transition: width 0.3s; border-radius: 2px;
     }
-    .nav-links a:hover::after { width: 100%; }
-    .nav-actions { display: flex; gap: 0.7rem; }
+    .nav-links-land a:hover::after { width: 100%; }
+    .nav-land .actions { display: flex; gap: 0.55rem; }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
-      padding: 0.72rem 1.45rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem;
-      border: none; cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff;
-      box-shadow: 0 4px 22px rgba(124,58,237,0.45);
-    }
-    .btn-primary:hover {
-      box-shadow: 0 8px 30px rgba(124,58,237,0.55); transform: translateY(-2px);
-      animation: wiggle 0.45s ease-in-out;
-    }
-    .btn-outline {
-      background: transparent; color: var(--text); border: 1.5px solid var(--border);
-    }
-    .btn-outline:hover {
-      border-color: var(--accent); color: var(--accent-light);
-      background: rgba(139,92,246,0.1); animation: wiggle 0.45s ease-in-out;
-    }
-    .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text); }
-    .btn-ghost:hover { background: rgba(139,92,246,0.15); animation: wiggle 0.4s ease-in-out; }
-    .btn-danger {
-      background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff;
-      box-shadow: 0 4px 16px rgba(239,68,68,0.35);
-    }
-    .btn-danger:hover { animation: wiggle 0.45s ease-in-out; }
-    .btn:disabled { opacity: 0.55; cursor: not-allowed; animation: none !important; transform: none !important; }
-    @keyframes wiggle {
-      0%,100% { transform: translateX(0) translateY(-2px); }
-      25% { transform: translateX(-3px) translateY(-2px) rotate(-0.8deg); }
-      75% { transform: translateX(3px) translateY(-2px) rotate(0.8deg); }
-    }
-
-    .hero {
+    .hero-land {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 3.5rem 5% 5.5rem; max-width: 920px; margin: 0 auto;
+      text-align: center; padding: 3rem 1.5rem 4rem; position: relative; z-index: 1;
     }
-    .badge {
-      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.42rem 1.1rem;
-      background: rgba(139,92,246,0.14); border: 1px solid var(--border); border-radius: 999px;
-      font-size: 0.86rem; color: var(--accent-light); margin-bottom: 1.6rem;
-      animation: up 0.7s ease-out;
+    .badge-land {
+      display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.4rem 1rem;
+      background: rgba(139,92,246,0.14); border: 1px solid rgba(139,92,246,0.25);
+      border-radius: 999px; font-size: 0.84rem; color: var(--accent2); margin-bottom: 1.4rem;
+      animation: fadeUp 0.7s ease-out;
     }
-    .badge::before {
-      content: ''; width: 8px; height: 8px; background: var(--success); border-radius: 50%;
-      animation: pulse 2s infinite;
+    .badge-land::before {
+      content: ''; width: 7px; height: 7px; background: var(--success); border-radius: 50%;
+      animation: pulseDot 2s infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(1.35)} }
-    .hero h1 {
-      font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.6rem, 6.5vw, 4.1rem);
-      font-weight: 700; line-height: 1.12; letter-spacing: -1.5px; margin-bottom: 1.3rem;
-      animation: up 0.7s ease-out 0.08s both;
+    .hero-land h1 {
+      font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.1rem, 6vw, 3.4rem);
+      font-weight: 700; line-height: 1.12; letter-spacing: -1.2px; margin-bottom: 1rem;
+      animation: fadeUp 0.7s ease-out 0.08s both;
     }
-    .hero h1 .grad {
-      background: linear-gradient(135deg, var(--accent-light), var(--cyan), var(--pink));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .hero p {
-      font-size: 1.12rem; color: var(--muted); max-width: 580px; margin: 0 auto 2.4rem;
-      animation: up 0.7s ease-out 0.16s both;
-    }
-    .hero-actions {
-      display: flex; gap: 0.9rem; flex-wrap: wrap; justify-content: center;
-      animation: up 0.7s ease-out 0.24s both;
-    }
-    .hero-actions .btn { padding: 0.95rem 1.9rem; font-size: 1.02rem; }
-    @keyframes up { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-
-    .section { padding: 5rem 5%; max-width: 1140px; margin: 0 auto; position: relative; z-index: 1; }
-    .section-title {
-      font-family: 'Space Grotesk', sans-serif; font-size: 2.05rem; font-weight: 700;
-      text-align: center; margin-bottom: 0.7rem; letter-spacing: -0.8px;
-    }
-    .section-sub { text-align: center; color: var(--muted); margin-bottom: 3rem; max-width: 520px; margin-left: auto; margin-right: auto; }
-
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; }
-    .feature-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
-      padding: 1.9rem; transition: all 0.35s ease; position: relative; overflow: hidden;
-    }
-    .feature-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--cyan)); opacity: 0; transition: opacity 0.3s;
-    }
-    .feature-card:hover {
-      transform: translateY(-7px); border-color: rgba(139,92,246,0.45);
-      box-shadow: 0 22px 44px rgba(0,0,0,0.4);
-    }
-    .feature-card:hover::before { opacity: 1; }
-    .feature-icon {
-      width: 50px; height: 50px; border-radius: 14px; background: rgba(139,92,246,0.14);
-      display: flex; align-items: center; justify-content: center; font-size: 1.45rem; margin-bottom: 1.15rem;
-    }
-    .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .feature-card p { color: var(--muted); font-size: 0.94rem; }
-
-    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.15rem; }
-    .why-item {
-      display: flex; gap: 1rem; align-items: flex-start; background: var(--bg-elevated);
-      padding: 1.4rem; border-radius: 16px; border: 1px solid transparent; transition: all 0.3s;
-    }
-    .why-item:hover { border-color: var(--border); transform: translateX(5px); }
-    .why-num {
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700;
-      color: var(--accent); min-width: 36px;
-    }
-    .why-item h4 { font-size: 1rem; margin-bottom: 0.25rem; }
-    .why-item p { color: var(--muted); font-size: 0.88rem; }
-
-    .terms-box {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
-      padding: 2.3rem; max-height: 400px; overflow-y: auto;
-    }
-    .terms-box h3 { margin-bottom: 1rem; color: var(--accent-light); font-size: 1.1rem; }
-    .terms-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
-    .terms-box li { padding-left: 1.4rem; position: relative; color: var(--muted); font-size: 0.94rem; }
-    .terms-box li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); }
-
-    .footer {
-      margin-top: auto; border-top: 1px solid var(--border);
-      padding: 3.8rem 5% 1.8rem; position: relative; z-index: 1;
-      background: linear-gradient(180deg, transparent, rgba(14,14,22,0.95));
-    }
-    .footer-inner {
-      max-width: 1140px; margin: 0 auto; display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.8rem;
-    }
-    .footer-brand .logo { margin-bottom: 0.9rem; }
-    .footer-brand p { color: var(--muted); font-size: 0.9rem; max-width: 270px; }
-    .footer-col h4 {
-      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1.2px;
-      color: var(--text); margin-bottom: 1.15rem; font-weight: 700;
-    }
-    .footer-col a {
-      display: block; color: var(--muted); text-decoration: none; font-size: 0.9rem;
-      margin-bottom: 0.55rem; transition: color 0.25s;
-    }
-    .footer-col a:hover { color: var(--accent-light); }
-    .footer-bottom {
-      max-width: 1140px; margin: 2.8rem auto 0; padding-top: 1.4rem;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
-      color: var(--muted); font-size: 0.84rem;
-    }
-    .socials { display: flex; gap: 0.65rem; }
-    .socials a {
-      width: 36px; height: 36px; border-radius: 10px; background: var(--bg-elevated);
-      display: flex; align-items: center; justify-content: center; color: var(--muted);
-      text-decoration: none; transition: all 0.3s; font-size: 1.05rem;
-    }
-    .socials a:hover { background: var(--accent); color: #fff; transform: translateY(-3px); }
-
-    /* ===== MODAL ===== */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(10px);
-      z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1rem;
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .modal-overlay.active { display: flex; opacity: 1; }
-    .modal {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 22px;
-      width: 100%; max-width: 420px; padding: 2.4rem; position: relative;
-      transform: scale(0.92) translateY(18px);
-      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-      box-shadow: 0 28px 60px rgba(0,0,0,0.55);
-    }
-    .modal-overlay.active .modal { transform: scale(1) translateY(0); }
-    .modal-close {
-      position: absolute; top: 1.15rem; right: 1.15rem; width: 34px; height: 34px;
-      border-radius: 10px; background: rgba(255,255,255,0.05); border: none;
-      color: var(--muted); cursor: pointer; font-size: 1.15rem;
-      display: flex; align-items: center; justify-content: center; transition: all 0.25s;
-    }
-    .modal-close:hover { background: rgba(248,113,113,0.2); color: var(--danger); }
-    .modal h2 {
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.45rem; font-weight: 700;
-      margin-bottom: 0.35rem; text-align: center; letter-spacing: -0.5px;
-    }
-    .modal .sub { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 1.9rem; }
-    .form-group { margin-bottom: 1.15rem; }
-    .form-group label { display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--muted); }
-    .form-group input {
-      width: 100%; padding: 0.82rem 1rem; background: var(--bg);
-      border: 1.5px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text);
-      font-size: 0.95rem; font-family: inherit; outline: none; transition: all 0.25s;
-    }
-    .form-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139,92,246,0.2); }
-    .form-group input::placeholder { color: #64748b; }
-    .modal .btn { width: 100%; padding: 0.92rem; margin-top: 0.4rem; font-size: 1rem; }
-    .switch-auth { text-align: center; margin-top: 1.4rem; font-size: 0.9rem; color: var(--muted); }
-    .switch-auth a { color: var(--accent-light); text-decoration: none; font-weight: 600; cursor: pointer; }
-    .switch-auth a:hover { text-decoration: underline; }
-    .error-msg {
-      background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3);
-      color: #fca5a5; padding: 0.7rem 1rem; border-radius: 10px; font-size: 0.875rem;
-      margin-bottom: 1rem; display: none;
-    }
-
-    /* ===== APP ===== */
-    #app { display: none; min-height: 100vh; position: relative; z-index: 1; flex-direction: column; }
-    #app.active { display: flex; }
-    .app-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.8rem 1.4rem; background: rgba(14,14,22,0.92); backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
-    }
-    .app-logo {
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.2rem;
-      background: linear-gradient(135deg, var(--accent-light), var(--cyan));
+    .hero-land h1 span {
+      background: linear-gradient(135deg, #a78bfa, #22d3ee, #f472b6);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .search-bar { flex: 1; max-width: 400px; margin: 0 1.4rem; position: relative; }
-    .search-bar input {
-      width: 100%; padding: 0.68rem 1rem 0.68rem 2.7rem; background: var(--bg);
-      border: 1.5px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text);
-      font-size: 0.9rem; outline: none; transition: border-color 0.25s; font-family: inherit;
+    .hero-land > p {
+      color: var(--muted); max-width: 440px; margin-bottom: 2rem; font-size: 1.05rem;
+      animation: fadeUp 0.7s ease-out 0.15s both;
     }
-    .search-bar input:focus { border-color: var(--accent); }
-    .search-bar .icon { position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.95rem; }
-    .search-results {
-      position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--bg-card);
-      border: 1px solid var(--border); border-radius: 14px; max-height: 300px; overflow-y: auto;
-      display: none; box-shadow: 0 16px 40px rgba(0,0,0,0.5); z-index: 50;
+    .hero-land .btns {
+      display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.7s ease-out 0.22s both;
     }
-    .search-results.active { display: block; }
-    .search-item {
-      display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem;
-      cursor: pointer; transition: background 0.2s;
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 2.5rem;
+      animation: fadeUp 0.7s ease-out 0.3s both;
     }
-    .search-item:hover { background: rgba(139,92,246,0.12); }
-    .search-item img, .search-item .avt-ph { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-    .avt-ph {
-      background: linear-gradient(135deg, var(--accent), var(--cyan));
-      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;
+    .hs { text-align: center; }
+    .hn {
+      font-size: 1.55rem; font-weight: 700;
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .header-user { display: flex; align-items: center; gap: 0.7rem; }
-    .header-user .avt { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); cursor: pointer; }
-    .header-user .name { font-weight: 600; font-size: 0.9rem; }
+    .hl { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
 
-    .app-body { display: flex; flex: 1; min-height: 0; }
-    .sidebar {
-      width: 275px; background: var(--bg-card); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; flex-shrink: 0;
+    .section-land {
+      padding: 4.5rem 5%; max-width: 1000px; margin: 0 auto; position: relative; z-index: 1;
     }
-    .sidebar-tabs { display: flex; border-bottom: 1px solid var(--border); }
-    .sidebar-tab {
-      flex: 1; padding: 0.88rem; text-align: center; background: none; border: none;
-      color: var(--muted); font-weight: 600; font-size: 0.9rem; cursor: pointer;
-      transition: color 0.25s; position: relative; font-family: inherit;
+    .stitle {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.85rem; font-weight: 700;
+      text-align: center; margin-bottom: 0.55rem; letter-spacing: -0.5px;
     }
-    .sidebar-tab.active { color: var(--accent-light); }
-    .sidebar-tab.active::after {
-      content: ''; position: absolute; bottom: 0; left: 18%; right: 18%; height: 2.5px;
-      background: var(--accent); border-radius: 2px 2px 0 0;
+    .ssub {
+      text-align: center; color: var(--muted); margin-bottom: 2.4rem; max-width: 480px;
+      margin-left: auto; margin-right: auto; font-size: 0.95rem;
     }
-    .sidebar-tab:hover { color: var(--text); }
-    .chat-list { flex: 1; overflow-y: auto; padding: 0.5rem; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.1rem;
+    }
+    .feat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.5rem; text-align: center; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .feat-card:hover {
+      transform: translateY(-6px); border-color: rgba(139,92,246,0.4);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    .feat-card .ic { font-size: 1.7rem; margin-bottom: 0.7rem; }
+    .feat-card h3 { font-size: 1rem; margin-bottom: 0.4rem; }
+    .feat-card p { font-size: 0.85rem; color: var(--muted); }
+
+    .feat-row { display: flex; flex-direction: column; gap: 0.9rem; }
+    .feat-row-item {
+      display: flex; gap: 1.1rem; align-items: flex-start; background: var(--card);
+      border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem 1.35rem;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .feat-row-item:hover { border-color: rgba(139,92,246,0.4); transform: translateX(5px); }
+    .fri-num { font-size: 1.25rem; font-weight: 700; color: var(--accent); min-width: 34px; }
+    .feat-row-item h4 { font-size: 0.98rem; margin-bottom: 0.2rem; }
+    .feat-row-item p { font-size: 0.86rem; color: var(--muted); }
+
+    .why-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;
+    }
+    .why-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.4rem; text-align: center; transition: transform 0.3s, border-color 0.3s;
+    }
+    .why-card:hover { transform: translateY(-5px); border-color: rgba(139,92,246,0.4); }
+    .wc-icon { font-size: 1.7rem; margin-bottom: 0.6rem; }
+    .why-card h4 { font-size: 0.98rem; margin-bottom: 0.35rem; }
+    .why-card p { font-size: 0.84rem; color: var(--muted); }
+
+    .terms-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.9rem; max-height: 360px; overflow-y: auto;
+    }
+    .terms-box h3 { color: var(--accent2); margin-bottom: 0.9rem; font-size: 1.05rem; }
+    .terms-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+    .terms-box li {
+      padding-left: 1.25rem; position: relative; color: var(--muted); font-size: 0.9rem;
+    }
+    .terms-box li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); }
+
+    .footer-full {
+      border-top: 1px solid var(--border); padding: 3.2rem 5% 1.4rem;
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, transparent, rgba(18,18,26,0.95));
+    }
+    .footer-grid {
+      max-width: 1000px; margin: 0 auto; display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.2rem;
+    }
+    .fg-brand .logo { margin-bottom: 0.7rem; }
+    .fg-brand p { color: var(--muted); font-size: 0.88rem; max-width: 250px; }
+    .fg-col h4 {
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 0.9rem; font-weight: 700;
+    }
+    .fg-col a {
+      display: block; color: var(--muted); text-decoration: none; font-size: 0.88rem;
+      margin-bottom: 0.45rem; transition: color 0.2s;
+    }
+    .fg-col a:hover { color: var(--accent2); }
+    .footer-bottom {
+      max-width: 1000px; margin: 2.2rem auto 0; padding-top: 1.2rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;
+      color: var(--muted); font-size: 0.82rem;
+    }
+    .socials { display: flex; gap: 0.55rem; }
+    .socials a {
+      width: 34px; height: 34px; border-radius: 8px; background: var(--elevated);
+      display: flex; align-items: center; justify-content: center; color: var(--muted);
+      text-decoration: none; transition: 0.25s; font-size: 1rem;
+    }
+    .socials a:hover { background: var(--accent); color: #fff; transform: translateY(-2px); }
+
+    /* ===== MODAL ===== */
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 1000;
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+      backdrop-filter: blur(8px);
+    }
+    .modal-bg.show { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      width: 100%; max-width: 400px; padding: 1.8rem; position: relative;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; margin-bottom: 0.25rem; text-align: center; }
+    .modal .sub { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 1.3rem; }
+    .modal-x {
+      position: absolute; top: 0.85rem; right: 0.85rem; width: 32px; height: 32px;
+      border: none; background: var(--elevated); color: var(--muted); border-radius: 8px;
+      cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-x:hover { background: rgba(239,68,68,0.2); color: var(--danger); }
+    .fg { margin-bottom: 0.95rem; }
+    .fg label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.3rem; }
+    .fg input, .fg textarea {
+      width: 100%; padding: 0.7rem 0.9rem; background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 0.9rem; font-family: inherit; outline: none;
+    }
+    .fg input:focus, .fg textarea:focus { border-color: var(--accent); }
+    .fg textarea { resize: vertical; min-height: 80px; }
+    .err {
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.85rem;
+      margin-bottom: 0.85rem; display: none;
+    }
+    .switch { text-align: center; margin-top: 1.15rem; font-size: 0.85rem; color: var(--muted); }
+    .switch a { color: var(--accent2); font-weight: 600; cursor: pointer; }
+
+    /* ===== APP ===== */
+    #app { display: none; min-height: 100vh; flex-direction: column; }
+    #app.show { display: flex; }
+
+    .topnav {
+      height: var(--nav-h); background: var(--card); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 0.75rem; position: sticky; top: 0; z-index: 100;
+      gap: 0.5rem;
+    }
+    .topnav .logo { font-size: 1.15rem; flex-shrink: 0; cursor: pointer; }
+    .search-wrap { flex: 1; max-width: 360px; position: relative; margin: 0 auto; }
+    .search-wrap input {
+      width: 100%; padding: 0.5rem 0.8rem 0.5rem 2.15rem; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 20px; color: var(--text);
+      font-size: 0.85rem; outline: none; font-family: inherit;
+    }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap .s-icon {
+      position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%);
+      color: var(--muted); font-size: 0.85rem; pointer-events: none;
+    }
+    .search-drop {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      max-height: 280px; overflow-y: auto; display: none;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.45); z-index: 50;
+    }
+    .search-drop.show { display: block; }
+    .s-item {
+      display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.9rem;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .s-item:hover { background: var(--elevated); }
+    .nav-icons { display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0; }
+    .nav-icon {
+      width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent;
+      color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; transition: 0.15s;
+    }
+    .nav-icon:hover, .nav-icon.active { background: var(--elevated); color: var(--accent2); }
+    .nav-user {
+      display: flex; align-items: center; gap: 0.4rem; cursor: pointer;
+      padding: 0.2rem 0.45rem 0.2rem 0.2rem; border-radius: 20px; transition: 0.15s;
+    }
+    .nav-user:hover { background: var(--elevated); }
+    .av {
+      width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;
+      overflow: hidden; flex-shrink: 0;
+    }
+    .av img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-user .nm { font-size: 0.85rem; font-weight: 600; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .app-main {
+      flex: 1; display: flex; max-width: 1100px; margin: 0 auto; width: 100%;
+      padding-bottom: calc(var(--bottom-h) + 8px);
+    }
+    .left-side {
+      width: 210px; padding: 1rem 0.5rem; flex-shrink: 0;
+      position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto;
+    }
+    .side-item {
+      display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 0.85rem;
+      border-radius: 10px; cursor: pointer; transition: 0.15s; font-weight: 500; font-size: 0.92rem;
+      color: var(--text); border: none; background: none; width: 100%; text-align: left; font-family: inherit;
+    }
+    .side-item:hover, .side-item.active { background: var(--elevated); color: var(--accent2); }
+    .side-item .ic { font-size: 1.2rem; width: 26px; text-align: center; }
+
+    .feed { flex: 1; max-width: 560px; padding: 1rem 0.55rem; margin: 0 auto; }
+
+    .create-post {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 0.95rem; margin-bottom: 0.9rem;
+    }
+    .create-post .row { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.7rem; }
+    .create-post .av { width: 40px; height: 40px; font-size: 0.9rem; }
+    .create-post .trigger {
+      flex: 1; padding: 0.65rem 1rem; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 24px; color: var(--muted); font-size: 0.9rem; cursor: pointer;
+      text-align: left; font-family: inherit; transition: 0.15s;
+    }
+    .create-post .trigger:hover { background: var(--elevated); }
+    .create-post .actions {
+      display: flex; gap: 0.35rem; border-top: 1px solid var(--border); padding-top: 0.6rem;
+    }
+    .act-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.35rem;
+      padding: 0.45rem; border: none; background: none; color: var(--muted);
+      font-size: 0.84rem; font-weight: 500; cursor: pointer; border-radius: 8px;
+      font-family: inherit; transition: 0.15s;
+    }
+    .act-btn:hover { background: var(--elevated); color: var(--text); }
+
+    .post {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      margin-bottom: 0.85rem; overflow: hidden;
+    }
+    .post-head { display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem 0.4rem; }
+    .post-head .av { width: 40px; height: 40px; font-size: 0.85rem; cursor: pointer; }
+    .post-head .name { font-weight: 600; font-size: 0.92rem; }
+    .post-head .time { font-size: 0.74rem; color: var(--muted); }
+    .post-body { padding: 0.25rem 1rem 0.75rem; font-size: 0.94rem; white-space: pre-wrap; word-break: break-word; }
+    .post-img { width: 100%; max-height: 400px; object-fit: cover; display: block; }
+    .post-stats {
+      display: flex; justify-content: space-between; padding: 0.35rem 1rem;
+      font-size: 0.8rem; color: var(--muted); border-bottom: 1px solid var(--border);
+    }
+    .post-actions { display: flex; padding: 0.25rem 0.4rem; }
+    .post-act {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.35rem;
+      padding: 0.5rem; border: none; background: none; color: var(--muted);
+      font-size: 0.85rem; font-weight: 500; cursor: pointer; border-radius: 8px;
+      font-family: inherit; transition: 0.15s;
+    }
+    .post-act:hover { background: var(--elevated); color: var(--text); }
+    .post-act.liked { color: #f472b6; }
+
+    /* Messages */
+    .msg-panel {
+      display: none; flex-direction: column; flex: 1; max-width: 560px;
+      margin: 0 auto; height: calc(100vh - var(--nav-h) - var(--bottom-h));
+    }
+    .msg-panel.show { display: flex; }
+    .msg-list-view { flex: 1; overflow-y: auto; padding: 0.4rem; }
+    .msg-chat-view { display: none; flex-direction: column; flex: 1; min-height: 0; }
+    .msg-chat-view.show { display: flex; }
+    .chat-top {
+      display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--border); background: var(--card);
+    }
+    .chat-top .back {
+      border: none; background: none; color: var(--accent2); font-size: 1.25rem;
+      cursor: pointer; padding: 0.25rem; font-family: inherit;
+    }
+    .chat-top .av { width: 36px; height: 36px; font-size: 0.8rem; }
+    .chat-top .name { font-weight: 600; font-size: 0.95rem; }
+    .chat-msgs {
+      flex: 1; overflow-y: auto; padding: 0.9rem; display: flex; flex-direction: column; gap: 0.45rem;
+    }
+    .bubble {
+      max-width: 75%; padding: 0.55rem 0.85rem; border-radius: 16px; font-size: 0.9rem; line-height: 1.4;
+    }
+    .bubble.me { align-self: flex-end; background: linear-gradient(135deg, #7c3aed, #6d28d9); border-bottom-right-radius: 4px; }
+    .bubble.them { align-self: flex-start; background: var(--elevated); border-bottom-left-radius: 4px; }
+    .bubble .t { font-size: 0.65rem; opacity: 0.65; margin-top: 0.15rem; text-align: right; }
+    .chat-input {
+      display: flex; gap: 0.45rem; padding: 0.65rem; border-top: 1px solid var(--border);
+      background: var(--card); align-items: center;
+    }
+    .chat-input input {
+      flex: 1; padding: 0.6rem 0.95rem; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 20px; color: var(--text); font-size: 0.9rem; outline: none; font-family: inherit;
+    }
+    .chat-input input:focus { border-color: var(--accent); }
     .chat-item {
-      display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem;
-      border-radius: 12px; cursor: pointer; transition: background 0.2s; margin-bottom: 2px;
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem;
+      border-radius: 10px; cursor: pointer; transition: 0.15s;
     }
-    .chat-item:hover, .chat-item.active { background: rgba(139,92,246,0.12); }
-    .chat-item img, .chat-item .avt-ph { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-    .chat-item-info { flex: 1; min-width: 0; }
-    .chat-item-info .top { display: flex; justify-content: space-between; align-items: center; }
-    .chat-item-info .name { font-weight: 600; font-size: 0.94rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .chat-item-info .time { font-size: 0.74rem; color: var(--muted); }
-    .chat-item-info .preview { font-size: 0.84rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sidebar-actions { padding: 1rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.5rem; }
+    .chat-item:hover, .chat-item.active { background: var(--elevated); }
+    .chat-item .av { width: 46px; height: 46px; font-size: 0.95rem; }
+    .chat-item .nm { font-weight: 600; font-size: 0.92rem; }
+    .chat-item .pv { font-size: 0.8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--bg); }
-    .profile-view { flex: 1; overflow-y: auto; }
-    .cover {
-      height: 210px; background: linear-gradient(135deg, #1e1b4b, #4c1d95, #0e7490);
-      position: relative; cursor: pointer; overflow: hidden;
+    /* Profile */
+    .profile-page {
+      display: none; flex: 1; max-width: 560px; margin: 0 auto; padding: 0 0.55rem 1rem;
     }
-    .cover img { width: 100%; height: 100%; object-fit: cover; }
-    .cover-overlay {
-      position: absolute; inset: 0; background: rgba(0,0,0,0.35); display: flex;
-      align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
-      color: #fff; font-weight: 600; font-size: 0.95rem;
+    .profile-page.show { display: block; }
+    .prof-cover {
+      height: 150px; background: linear-gradient(135deg, #1e1b4b, #4c1d95, #0e7490);
+      border-radius: 0 0 12px 12px; position: relative; cursor: pointer; overflow: hidden;
     }
-    .cover:hover .cover-overlay { opacity: 1; }
-    .profile-info { padding: 0 1.8rem 2rem; position: relative; }
-    .avatar-wrap {
-      width: 120px; height: 120px; border-radius: 50%; border: 5px solid var(--bg);
-      margin-top: -65px; position: relative; cursor: pointer; overflow: hidden;
+    .prof-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .prof-cover .ov {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.3); display: flex;
+      align-items: center; justify-content: center; opacity: 0; transition: 0.2s;
+      color: #fff; font-weight: 600; font-size: 0.9rem;
+    }
+    .prof-cover:hover .ov { opacity: 1; }
+    .prof-info { padding: 0 0.4rem; }
+    .prof-av-wrap {
+      width: 96px; height: 96px; border-radius: 50%; border: 4px solid var(--bg);
+      margin-top: -48px; position: relative; cursor: pointer; overflow: hidden;
       background: linear-gradient(135deg, var(--accent), var(--cyan));
     }
-    .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar-wrap .avt-ph {
+    .prof-av-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .prof-av-wrap .ph {
       width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-      font-size: 2.4rem; font-weight: 700;
+      font-size: 1.9rem; font-weight: 700;
     }
-    .avatar-overlay {
-      position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex;
-      align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
-      color: #fff; font-size: 0.82rem; font-weight: 600; text-align: center; padding: 0.4rem;
+    .prof-av-wrap .ov {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex;
+      align-items: center; justify-content: center; opacity: 0; transition: 0.2s;
+      color: #fff; font-size: 0.75rem; font-weight: 600;
     }
-    .avatar-wrap:hover .avatar-overlay { opacity: 1; }
-    .profile-name {
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.65rem; font-weight: 700;
-      margin-top: 0.9rem; margin-bottom: 0.2rem; letter-spacing: -0.5px;
-    }
-    .profile-username { color: var(--muted); font-size: 0.94rem; margin-bottom: 1.4rem; }
-    .profile-stats { display: flex; gap: 1.9rem; margin-bottom: 1.4rem; }
-    .stat { text-align: center; }
-    .stat .num { font-weight: 700; font-size: 1.2rem; }
-    .stat .label { font-size: 0.78rem; color: var(--muted); }
+    .prof-av-wrap:hover .ov { opacity: 1; }
+    .prof-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; margin-top: 0.55rem; }
+    .prof-user { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .prof-stats { display: flex; gap: 1.4rem; margin-bottom: 0.9rem; }
+    .prof-stats .s { text-align: center; }
+    .prof-stats .n { font-weight: 700; font-size: 1.1rem; }
+    .prof-stats .l { font-size: 0.74rem; color: var(--muted); }
 
-    .chat-view { flex: 1; display: none; flex-direction: column; min-height: 0; }
-    .chat-view.active { display: flex; }
-    .chat-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.95rem 1.4rem; border-bottom: 1px solid var(--border); background: var(--bg-card);
+    /* Bottom nav */
+    .bottom-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-h);
+      background: var(--card); border-top: 1px solid var(--border); z-index: 100;
+      justify-content: space-around; align-items: center; padding: 0 0.4rem;
     }
-    .chat-header-left { display: flex; align-items: center; gap: 0.8rem; }
-    .chat-header-left .avt-ph { width: 42px; height: 42px; border-radius: 50%; }
-    .chat-header-left .name { font-weight: 600; }
-    .chat-header-left .status { font-size: 0.78rem; color: var(--success); }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 1.4rem; display: flex; flex-direction: column; gap: 0.7rem; }
-    .msg {
-      max-width: 68%; padding: 0.72rem 1.05rem; border-radius: 16px;
-      font-size: 0.94rem; line-height: 1.45; animation: msgIn 0.28s ease-out;
+    .bn-item {
+      display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
+      border: none; background: none; color: var(--muted); cursor: pointer;
+      font-size: 0.68rem; font-weight: 500; padding: 0.35rem 0.7rem; border-radius: 10px;
+      font-family: inherit; transition: 0.15s;
     }
-    @keyframes msgIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-    .msg.sent {
-      align-self: flex-end; background: linear-gradient(135deg, #7c3aed, #6d28d9);
-      border-bottom-right-radius: 4px;
-    }
-    .msg.received {
-      align-self: flex-start; background: var(--bg-elevated);
-      border: 1px solid rgba(255,255,255,0.06); border-bottom-left-radius: 4px;
-    }
-    .msg .time { font-size: 0.68rem; opacity: 0.7; margin-top: 0.28rem; text-align: right; }
-    .chat-input-area {
-      padding: 0.95rem 1.4rem; border-top: 1px solid var(--border); background: var(--bg-card);
-      display: flex; gap: 0.7rem; align-items: center;
-    }
-    .chat-input-area input {
-      flex: 1; padding: 0.82rem 1.1rem; background: var(--bg);
-      border: 1.5px solid rgba(255,255,255,0.08); border-radius: 14px; color: var(--text);
-      font-size: 0.94rem; outline: none; font-family: inherit; transition: border-color 0.25s;
-    }
-    .chat-input-area input:focus { border-color: var(--accent); }
-    .chat-input-area .btn { padding: 0.82rem 1.2rem; border-radius: 14px; }
-
-    .empty-chat {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: var(--muted); gap: 0.9rem; padding: 2rem;
-    }
-    .empty-chat .icon { font-size: 3.8rem; opacity: 0.35; }
-
-    .member-list {
-      max-height: 175px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px; padding: 0.45rem;
-    }
-    .member-check {
-      display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem;
-      border-radius: 8px; cursor: pointer;
-    }
-    .member-check:hover { background: rgba(139,92,246,0.1); }
-    .member-check input { width: auto; accent-color: var(--accent); }
+    .bn-item .ic { font-size: 1.3rem; }
+    .bn-item.active, .bn-item:hover { color: var(--accent2); }
 
     .toast {
-      position: fixed; bottom: 1.8rem; right: 1.8rem; background: var(--bg-card);
-      border: 1px solid var(--border); padding: 0.95rem 1.4rem; border-radius: 14px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.45); z-index: 2000;
-      transform: translateY(100px); opacity: 0;
-      transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); max-width: 340px; font-size: 0.92rem;
+      position: fixed; bottom: calc(var(--bottom-h) + 14px); left: 50%;
+      transform: translateX(-50%) translateY(80px); background: var(--card);
+      border: 1px solid var(--border); padding: 0.65rem 1.2rem; border-radius: 10px;
+      font-size: 0.88rem; z-index: 2000; opacity: 0; transition: all 0.3s;
+      white-space: nowrap; max-width: 90vw; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { border-color: rgba(52,211,153,0.4); }
-    .toast.error { border-color: rgba(248,113,113,0.4); }
-    .hidden-input { display: none; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .hidden { display: none !important; }
+    .empty { text-align: center; padding: 2.5rem 1rem; color: var(--muted); }
+    .empty .ic { font-size: 2.8rem; opacity: 0.3; margin-bottom: 0.4rem; }
 
-    @media (max-width: 900px) {
-      .footer-inner { grid-template-columns: 1fr 1fr; }
-      .sidebar { width: 240px; }
-      .nav-links { display: none; }
+    /* Mobile */
+    @media (max-width: 768px) {
+      .nav-links-land { display: none; }
+      .left-side { display: none; }
+      .bottom-nav { display: flex; }
+      .topnav {
+        flex-wrap: wrap; height: auto; min-height: var(--nav-h);
+        padding: 0.5rem 0.65rem; gap: 0.4rem;
+      }
+      .topnav .search-wrap {
+        order: 3; flex: 1 1 100%; max-width: 100%; margin: 0;
+      }
+      .topnav .nav-icons { margin-left: auto; }
+      .topnav .nav-user .nm { display: none; }
+      .nav-icon:not(.mobile-show) { display: none; }
+      .feed, .msg-panel, .profile-page { max-width: 100%; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .hero-stats { gap: 1.5rem; }
     }
-    @media (max-width: 640px) {
-      .footer-inner { grid-template-columns: 1fr; }
-      .app-body { flex-direction: column; }
-      .sidebar { width: 100%; max-height: 38vh; }
-      .hero h1 { font-size: 2.1rem; }
-      .search-bar { display: none; }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
     }
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 3px; }
+    @media (min-width: 769px) {
+      .bottom-nav { display: none; }
+      .app-main { padding-bottom: 1rem; }
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.35); border-radius: 2px; }
   </style>
 </head>
 <body>
-  <div class="bg-grid"></div>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
 
-  <!-- LANDING -->
-  <div id="landing">
-    <nav class="nav">
-      <div class="logo"><span class="logo-icon">◈</span> FGTGRAM</div>
-      <ul class="nav-links">
-        <li><a href="#gioi-thieu">Giới thiệu</a></li>
-        <li><a href="#tai-sao">Tại sao chọn</a></li>
-        <li><a href="#dieu-khoan">Điều khoản</a></li>
+<!-- ========== LANDING ========== -->
+<div id="landing">
+  <div class="l-bg"></div>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+
+  <nav class="nav-land">
+    <div class="logo">◈ FGTGRAM</div>
+    <ul class="nav-links-land">
+      <li><a href="#gioi-thieu">Giới thiệu</a></li>
+      <li><a href="#tinh-nang">Tính năng</a></li>
+      <li><a href="#tai-sao">Tại sao chọn</a></li>
+      <li><a href="#dieu-khoan">Điều khoản</a></li>
+    </ul>
+    <div class="actions">
+      <button class="btn btn-outline btn-sm" onclick="openAuth('login')">Đăng nhập</button>
+      <button class="btn btn-primary btn-sm" onclick="openAuth('register')">Đăng ký</button>
+    </div>
+  </nav>
+
+  <section class="hero-land">
+    <div class="badge-land">🔒 Ẩn danh hoàn toàn · Đồng bộ mọi thiết bị</div>
+    <h1>Mạng xã hội <span>ẩn danh</span><br>dành cho mọi người</h1>
+    <p>Kết nối, đăng bài, nhắn tin mà không cần lộ danh tính thật. Dùng máy tính hay điện thoại đều tìm thấy nhau.</p>
+    <div class="btns">
+      <button class="btn btn-primary" onclick="openAuth('register')">Bắt đầu miễn phí →</button>
+      <button class="btn btn-outline" onclick="document.getElementById('gioi-thieu').scrollIntoView({behavior:'smooth'})">Tìm hiểu thêm</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hn">100%</div><div class="hl">Ẩn danh</div></div>
+      <div class="hs"><div class="hn">0</div><div class="hl">Theo dõi</div></div>
+      <div class="hs"><div class="hn">∞</div><div class="hl">Tin nhắn</div></div>
+    </div>
+  </section>
+
+  <section class="section-land" id="gioi-thieu">
+    <h2 class="stitle">FGTGRAM là gì?</h2>
+    <p class="ssub">Nền tảng mạng xã hội được thiết kế từ gốc để bảo vệ sự riêng tư của bạn.</p>
+    <div class="features-grid">
+      <div class="feat-card"><div class="ic">🕵️</div><h3>Ẩn danh tuyệt đối</h3><p>Không bắt buộc SĐT, không liên kết MXH thật. Chỉ cần email và username ảo.</p></div>
+      <div class="feat-card"><div class="ic">📝</div><h3>Đăng bài như Facebook</h3><p>Chia sẻ suy nghĩ, đăng ảnh, thích bài viết. Giao diện quen thuộc, dễ dùng.</p></div>
+      <div class="feat-card"><div class="ic">💬</div><h3>Nhắn tin realtime</h3><p>Chat 1-1 giữa mọi thiết bị. Tạo nhóm, xóa sạch tin nhắn bất cứ lúc nào.</p></div>
+      <div class="feat-card"><div class="ic">💥</div><h3>Xóa sạch vĩnh viễn</h3><p>Một nút xóa toàn bộ đoạn chat. Cả hai bên đều không còn thấy tin nhắn.</p></div>
+    </div>
+  </section>
+
+  <section class="section-land" id="tinh-nang">
+    <h2 class="stitle">Tính năng nổi bật</h2>
+    <p class="ssub">Mọi thứ bạn cần cho một mạng xã hội riêng tư.</p>
+    <div class="feat-row">
+      <div class="feat-row-item"><div class="fri-num">01</div><div><h4>Bảng tin cá nhân</h4><p>Đăng bài, đăng ảnh, thích bài viết — giống Facebook nhưng ẩn danh.</p></div></div>
+      <div class="feat-row-item"><div class="fri-num">02</div><div><h4>Tìm bạn theo username</h4><p>Gõ username là tìm thấy ngay. Kết bạn và nhắn tin không cần SĐT.</p></div></div>
+      <div class="feat-row-item"><div class="fri-num">03</div><div><h4>Chat realtime đa thiết bị</h4><p>Máy tính, điện thoại — tin nhắn đồng bộ gần như ngay lập tức.</p></div></div>
+      <div class="feat-row-item"><div class="fri-num">04</div><div><h4>Hồ sơ tùy chỉnh</h4><p>Đổi ảnh đại diện, ảnh bìa. Tên hiển thị và username do bạn quyết định.</p></div></div>
+    </div>
+  </section>
+
+  <section class="section-land" id="tai-sao">
+    <h2 class="stitle">Tại sao nên chọn FGTGRAM?</h2>
+    <p class="ssub">Chúng tôi đặt quyền riêng tư lên hàng đầu.</p>
+    <div class="why-grid">
+      <div class="why-card"><div class="wc-icon">🚫</div><h4>Không theo dõi</h4><p>Không cookie theo dõi, không bán dữ liệu, không quảng cáo dựa trên hành vi.</p></div>
+      <div class="why-card"><div class="wc-icon">🎛️</div><h4>Kiểm soát dữ liệu</h4><p>Xóa tin nhắn là xóa vĩnh viễn cho mọi người trong đoạn chat.</p></div>
+      <div class="why-card"><div class="wc-icon">📱</div><h4>Mọi thiết bị</h4><p>Đăng ký một lần, dùng trên máy tính và điện thoại. Tìm thấy nhau ngay.</p></div>
+      <div class="why-card"><div class="wc-icon">🆓</div><h4>Miễn phí hoàn toàn</h4><p>Không giới hạn tin nhắn, không giới hạn bài viết, không phí ẩn.</p></div>
+    </div>
+  </section>
+
+  <section class="section-land" id="dieu-khoan">
+    <h2 class="stitle">Điều khoản sử dụng</h2>
+    <p class="ssub">Vui lòng đọc kỹ trước khi đăng ký tài khoản.</p>
+    <div class="terms-box">
+      <h3>Quy định chung</h3>
+      <ul>
+        <li>Bạn phải từ 16 tuổi trở lên để sử dụng FGTGRAM.</li>
+        <li>Không sử dụng nền tảng để phát tán nội dung bất hợp pháp, lừa đảo, quấy rối hoặc thù hận.</li>
+        <li>Mỗi người chỉ được tạo một tài khoản. Tạo nhiều tài khoản giả mạo có thể bị khóa.</li>
+        <li>Bạn chịu trách nhiệm hoàn toàn với nội dung tin nhắn, bài viết và hình ảnh bạn đăng tải.</li>
+        <li>FGTGRAM có quyền tạm khóa hoặc xóa tài khoản nếu vi phạm nghiêm trọng điều khoản.</li>
+        <li>Khi bạn nhấn “Xóa sạch chat”, dữ liệu sẽ bị xóa vĩnh viễn và không thể khôi phục.</li>
+        <li>Chúng tôi không chịu trách nhiệm về các cuộc trò chuyện giữa người dùng với nhau.</li>
+        <li>Bằng việc đăng ký, bạn đồng ý với các điều khoản này và chính sách bảo mật của chúng tôi.</li>
       </ul>
-      <div class="nav-actions">
-        <button class="btn btn-outline" onclick="openModal('login')">Đăng nhập</button>
-        <button class="btn btn-primary" onclick="openModal('register')">Đăng ký</button>
-      </div>
-    </nav>
+    </div>
+  </section>
 
-    <section class="hero">
-      <div class="badge">🔒 Ẩn danh · Đồng bộ mọi thiết bị</div>
-      <h1>Mạng xã hội <span class="grad">ẩn danh</span><br>dành cho mọi người</h1>
-      <p>FGTGRAM giúp bạn kết nối, nhắn tin và tạo nhóm mà không cần lộ danh tính thật. Dùng máy tính hay điện thoại đều tìm thấy nhau và chat realtime.</p>
-      <div class="hero-actions">
-        <button class="btn btn-primary" onclick="openModal('register')">Bắt đầu miễn phí →</button>
-        <button class="btn btn-outline" onclick="document.getElementById('gioi-thieu').scrollIntoView({behavior:'smooth'})">Tìm hiểu thêm</button>
+  <footer class="footer-full">
+    <div class="footer-grid">
+      <div class="fg-brand">
+        <div class="logo">◈ FGTGRAM</div>
+        <p>Mạng xã hội ẩn danh — kết nối tự do, kiểm soát hoàn toàn dữ liệu của chính bạn.</p>
       </div>
-    </section>
+      <div class="fg-col">
+        <h4>Sản phẩm</h4>
+        <a href="#gioi-thieu">Giới thiệu</a>
+        <a href="#tinh-nang">Tính năng</a>
+        <a href="#dieu-khoan">Điều khoản</a>
+      </div>
+      <div class="fg-col">
+        <h4>Hỗ trợ</h4>
+        <a href="#">Trung tâm trợ giúp</a>
+        <a href="#">Báo cáo sự cố</a>
+        <a href="#">Liên hệ</a>
+      </div>
+      <div class="fg-col">
+        <h4>Pháp lý</h4>
+        <a href="#dieu-khoan">Điều khoản sử dụng</a>
+        <a href="#">Chính sách bảo mật</a>
+        <a href="#">Cookie</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 FGTGRAM. All rights reserved.</span>
+      <div class="socials"><a href="#">𝕏</a><a href="#">◇</a><a href="#">⌘</a></div>
+    </div>
+  </footer>
+</div>
 
-    <section class="section" id="gioi-thieu">
-      <h2 class="section-title">FGTGRAM là gì?</h2>
-      <p class="section-sub">Nền tảng mạng xã hội được thiết kế từ gốc để bảo vệ sự riêng tư và danh tính của bạn.</p>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🕵️</div>
-          <h3>Ẩn danh tuyệt đối</h3>
-          <p>Không bắt buộc số điện thoại, không liên kết mạng xã hội thật. Chỉ cần email và username ảo.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">💬</div>
-          <h3>Nhắn tin & Nhóm</h3>
-          <p>Tạo cuộc trò chuyện 1-1 hoặc nhóm. Tin nhắn đồng bộ realtime giữa mọi thiết bị.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">💥</div>
-          <h3>Xóa sạch tin nhắn</h3>
-          <p>Một nút duy nhất xóa toàn bộ đoạn chat. Cả hai bên (hoặc cả nhóm) sẽ không còn thấy gì nữa.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🔍</div>
-          <h3>Tìm bạn dễ dàng</h3>
-          <p>Thanh tìm kiếm username giúp bạn kết nối với người dùng khác trên nền tảng nhanh chóng.</p>
-        </div>
+<!-- AUTH MODAL -->
+<div class="modal-bg" id="authModal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeAuth()">×</button>
+    <h2 id="authTitle">Đăng ký</h2>
+    <p class="sub" id="authSub">Tạo tài khoản ẩn danh</p>
+    <div class="err" id="authErr"></div>
+    <form onsubmit="handleAuth(event)">
+      <div class="fg" id="nameFg">
+        <label>Tên hiển thị</label>
+        <input type="text" id="fName" placeholder="Tên của bạn" autocomplete="off">
       </div>
-    </section>
-
-    <section class="section" id="tai-sao">
-      <h2 class="section-title">Tại sao nên chọn FGTGRAM?</h2>
-      <p class="section-sub">Chúng tôi đặt quyền riêng tư lên hàng đầu, không phải doanh thu từ dữ liệu.</p>
-      <div class="why-grid">
-        <div class="why-item">
-          <div class="why-num">01</div>
-          <div><h4>Không theo dõi</h4><p>Không cookie theo dõi, không bán dữ liệu, không quảng cáo dựa trên hành vi.</p></div>
-        </div>
-        <div class="why-item">
-          <div class="why-num">02</div>
-          <div><h4>Kiểm soát dữ liệu</h4><p>Bạn quyết định tin nhắn sống bao lâu. Xóa là xóa vĩnh viễn cho mọi người.</p></div>
-        </div>
-        <div class="why-item">
-          <div class="why-num">03</div>
-          <div><h4>Đồng bộ mọi thiết bị</h4><p>Máy tính hay điện thoại đều tìm thấy bạn bè và chat được ngay lập tức.</p></div>
-        </div>
-        <div class="why-item">
-          <div class="why-num">04</div>
-          <div><h4>Miễn phí & Mở</h4><p>Sử dụng hoàn toàn miễn phí. Không giới hạn tin nhắn hay số nhóm bạn tạo.</p></div>
-        </div>
+      <div class="fg">
+        <label>Username</label>
+        <input type="text" id="fUser" placeholder="ghost_42" required pattern="[a-zA-Z0-9_]{3,20}" autocomplete="off">
       </div>
-    </section>
-
-    <section class="section" id="dieu-khoan">
-      <h2 class="section-title">Điều khoản sử dụng</h2>
-      <p class="section-sub">Vui lòng đọc kỹ trước khi đăng ký tài khoản.</p>
-      <div class="terms-box">
-        <h3>Quy định chung</h3>
-        <ul>
-          <li>Bạn phải từ 16 tuổi trở lên để sử dụng FGTGRAM.</li>
-          <li>Không sử dụng nền tảng để phát tán nội dung bất hợp pháp, lừa đảo, quấy rối hoặc thù hận.</li>
-          <li>Mỗi người chỉ được tạo một tài khoản. Việc tạo nhiều tài khoản giả mạo có thể bị khóa.</li>
-          <li>Bạn chịu trách nhiệm hoàn toàn với nội dung tin nhắn và hình ảnh bạn đăng tải.</li>
-          <li>FGTGRAM có quyền tạm khóa hoặc xóa tài khoản nếu vi phạm nghiêm trọng điều khoản.</li>
-          <li>Khi bạn nhấn “Xóa sạch chat”, dữ liệu sẽ bị xóa vĩnh viễn và không thể khôi phục.</li>
-          <li>Chúng tôi không chịu trách nhiệm về các cuộc trò chuyện giữa người dùng với nhau.</li>
-          <li>Bằng việc đăng ký, bạn đồng ý với các điều khoản này và chính sách bảo mật của chúng tôi.</li>
-        </ul>
+      <div class="fg">
+        <label>Email</label>
+        <input type="email" id="fEmail" placeholder="you@gmail.com" required autocomplete="off">
       </div>
-    </section>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <div class="logo"><span class="logo-icon">◈</span> FGTGRAM</div>
-          <p>Mạng xã hội ẩn danh — kết nối tự do, kiểm soát hoàn toàn dữ liệu của chính bạn.</p>
-        </div>
-        <div class="footer-col">
-          <h4>Sản phẩm</h4>
-          <a href="#gioi-thieu">Giới thiệu</a>
-          <a href="#tai-sao">Tính năng</a>
-          <a href="#dieu-khoan">Điều khoản</a>
-        </div>
-        <div class="footer-col">
-          <h4>Hỗ trợ</h4>
-          <a href="#">Trung tâm trợ giúp</a>
-          <a href="#">Báo cáo sự cố</a>
-          <a href="#">Liên hệ</a>
-        </div>
-        <div class="footer-col">
-          <h4>Pháp lý</h4>
-          <a href="#dieu-khoan">Điều khoản sử dụng</a>
-          <a href="#">Chính sách bảo mật</a>
-          <a href="#">Cookie</a>
-        </div>
+      <div class="fg">
+        <label>Mật khẩu</label>
+        <input type="password" id="fPass" placeholder="Tối thiểu 6 ký tự" required minlength="6">
       </div>
-      <div class="footer-bottom">
-        <span>© 2026 FGTGRAM. All rights reserved.</span>
-        <div class="socials"><a href="#">𝕏</a><a href="#">◇</a><a href="#">⌘</a></div>
-      </div>
-    </footer>
+      <button type="submit" class="btn btn-primary btn-block" id="authBtn">Đăng ký</button>
+    </form>
+    <div class="switch">
+      <span id="swText">Đã có tài khoản?</span>
+      <a id="swLink" onclick="toggleAuth()">Đăng nhập</a>
+    </div>
   </div>
+</div>
 
-  <!-- AUTH MODAL -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal()">×</button>
-      <h2 id="modalTitle">Đăng ký</h2>
-      <p class="sub" id="modalSub">Tạo tài khoản ẩn danh trong vài giây</p>
-      <div class="error-msg" id="authError"></div>
-      <form id="authForm" onsubmit="handleAuth(event)">
-        <div class="form-group" id="nameGroup">
-          <label>Tên hiển thị</label>
-          <input type="text" id="displayName" placeholder="Tên bạn muốn mọi người thấy" autocomplete="off">
+<!-- CREATE POST MODAL -->
+<div class="modal-bg" id="postModal">
+  <div class="modal">
+    <button class="modal-x" onclick="closePostModal()">×</button>
+    <h2>Tạo bài viết</h2>
+    <p class="sub">Chia sẻ điều gì đó...</p>
+    <div class="fg"><textarea id="postContent" placeholder="Bạn đang nghĩ gì?" rows="4"></textarea></div>
+    <div class="fg"><label>Ảnh (tùy chọn)</label><input type="file" id="postImg" accept="image/*"></div>
+    <button class="btn btn-primary btn-block" onclick="submitPost()">Đăng bài</button>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div id="app">
+  <header class="topnav">
+    <div class="logo" onclick="goPage('feed')">◈ FGTGRAM</div>
+    <div class="search-wrap">
+      <span class="s-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Tìm người dùng..." oninput="doSearch(this.value)" autocomplete="off">
+      <div class="search-drop" id="searchDrop"></div>
+    </div>
+    <div class="nav-icons">
+      <button class="nav-icon mobile-show active" id="navFeed" onclick="goPage('feed')" title="Bảng tin">🏠</button>
+      <button class="nav-icon mobile-show" id="navMsg" onclick="goPage('messages')" title="Tin nhắn">💬</button>
+      <button class="nav-icon" onclick="goPage('profile')" title="Hồ sơ">👤</button>
+    </div>
+    <div class="nav-user" onclick="goPage('profile')">
+      <div class="av" id="navAv">?</div>
+      <span class="nm" id="navName">User</span>
+    </div>
+  </header>
+
+  <div class="app-main">
+    <aside class="left-side">
+      <button class="side-item active" id="sideFeed" onclick="goPage('feed')"><span class="ic">🏠</span> Bảng tin</button>
+      <button class="side-item" id="sideMsg" onclick="goPage('messages')"><span class="ic">💬</span> Tin nhắn</button>
+      <button class="side-item" id="sideProf" onclick="goPage('profile')"><span class="ic">👤</span> Hồ sơ</button>
+      <button class="side-item" onclick="logout()"><span class="ic">🚪</span> Đăng xuất</button>
+    </aside>
+
+    <div class="feed" id="pageFeed">
+      <div class="create-post">
+        <div class="row">
+          <div class="av" id="createAv">?</div>
+          <button class="trigger" onclick="openPostModal()">Bạn đang nghĩ gì?</button>
         </div>
-        <div class="form-group">
-          <label>Username</label>
-          <input type="text" id="username" placeholder="vd: ghost_42" required autocomplete="off" pattern="[a-zA-Z0-9_]{3,20}">
+        <div class="actions">
+          <button class="act-btn" onclick="openPostModal()">📝 Đăng bài</button>
+          <button class="act-btn" onclick="openPostModal()">🖼️ Ảnh</button>
         </div>
-        <div class="form-group">
-          <label>Gmail</label>
-          <input type="email" id="email" placeholder="you@gmail.com" required autocomplete="off">
+      </div>
+      <div id="postsList"><div class="empty"><div class="ic">📝</div>Chưa có bài viết nào</div></div>
+    </div>
+
+    <div class="msg-panel" id="pageMsg">
+      <div class="msg-list-view" id="msgListView">
+        <div style="padding:0.7rem;display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:1.05rem">Tin nhắn</strong>
+          <button class="btn btn-sm btn-danger" onclick="nukeAllChats()">💥 Xóa hết</button>
         </div>
-        <div class="form-group">
-          <label>Mật khẩu</label>
-          <input type="password" id="password" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+        <div id="chatList"><div class="empty"><div class="ic">💬</div>Chưa có cuộc trò chuyện</div></div>
+      </div>
+      <div class="msg-chat-view" id="msgChatView">
+        <div class="chat-top">
+          <button class="back" onclick="backToList()">←</button>
+          <div class="av" id="chatAv">?</div>
+          <div class="name" id="chatName">Chat</div>
+          <button class="btn btn-sm btn-danger" style="margin-left:auto" onclick="nukeCurrentChat()">Xóa</button>
         </div>
-        <button type="submit" class="btn btn-primary" id="authSubmitBtn">Đăng ký</button>
-      </form>
-      <div class="switch-auth">
-        <span id="switchText">Đã có tài khoản?</span>
-        <a id="switchLink" onclick="toggleAuthMode()">Đăng nhập</a>
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div class="chat-input">
+          <input type="text" id="msgInput" placeholder="Nhắn tin..." onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="btn btn-primary btn-sm" onclick="sendMsg()">Gửi</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-page" id="pageProfile">
+      <div class="prof-cover" onclick="document.getElementById('coverFile').click()">
+        <img id="profCover" class="hidden">
+        <div class="ov">📷 Đổi ảnh bìa</div>
+      </div>
+      <input type="file" id="coverFile" class="hidden" accept="image/*" onchange="upCover(event)">
+      <div class="prof-info">
+        <div class="prof-av-wrap" onclick="document.getElementById('avFile').click()">
+          <img id="profAvImg" class="hidden">
+          <div class="ph" id="profAvPh">?</div>
+          <div class="ov">📷</div>
+        </div>
+        <input type="file" id="avFile" class="hidden" accept="image/*" onchange="upAv(event)">
+        <div class="prof-name" id="profName">Tên</div>
+        <div class="prof-user" id="profUser">@user</div>
+        <div class="prof-stats">
+          <div class="s"><div class="n" id="stPosts">0</div><div class="l">Bài viết</div></div>
+          <div class="s"><div class="n" id="stChats">0</div><div class="l">Tin nhắn</div></div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
       </div>
     </div>
   </div>
 
-  <!-- GROUP MODAL -->
-  <div class="modal-overlay" id="groupModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeGroupModal()">×</button>
-      <h2>Tạo nhóm chat</h2>
-      <p class="sub">Chọn thành viên và đặt tên nhóm</p>
-      <div class="form-group">
-        <label>Tên nhóm</label>
-        <input type="text" id="groupName" placeholder="Tên nhóm của bạn">
-      </div>
-      <div class="form-group">
-        <label>Thành viên</label>
-        <div class="member-list" id="memberList"></div>
-      </div>
-      <button class="btn btn-primary" style="width:100%" onclick="createGroup()">Tạo nhóm</button>
-    </div>
-  </div>
+  <nav class="bottom-nav">
+    <button class="bn-item active" id="bnFeed" onclick="goPage('feed')"><span class="ic">🏠</span>Bảng tin</button>
+    <button class="bn-item" id="bnMsg" onclick="goPage('messages')"><span class="ic">💬</span>Tin nhắn</button>
+    <button class="bn-item" id="bnProf" onclick="goPage('profile')"><span class="ic">👤</span>Hồ sơ</button>
+  </nav>
+</div>
 
-  <!-- APP -->
-  <div id="app">
-    <header class="app-header">
-      <div class="app-logo">◈ FGTGRAM</div>
-      <div class="search-bar">
-        <span class="icon">🔍</span>
-        <input type="text" id="userSearch" placeholder="Tìm username để kết bạn..." oninput="searchUsers(this.value)" autocomplete="off">
-        <div class="search-results" id="searchResults"></div>
-      </div>
-      <div class="header-user">
-        <span class="name" id="headerName">User</span>
-        <img class="avt" id="headerAvt" src="" alt="" style="display:none" onclick="showProfile()">
-        <div class="avt-ph" id="headerAvtPh" style="width:36px;height:36px;border-radius:50%;cursor:pointer" onclick="showProfile()"></div>
-        <button class="btn btn-ghost" style="padding:0.48rem 0.85rem;font-size:0.84rem" onclick="logout()">Đăng xuất</button>
-      </div>
-    </header>
+<div class="toast" id="toast"></div>
 
-    <div class="app-body">
-      <aside class="sidebar">
-        <div class="sidebar-tabs">
-          <button class="sidebar-tab active" data-tab="chats" onclick="switchTab('chats')">Tin nhắn</button>
-          <button class="sidebar-tab" data-tab="profile" onclick="switchTab('profile')">Hồ sơ</button>
-        </div>
-        <div class="chat-list" id="chatList"></div>
-        <div class="sidebar-actions">
-          <button class="btn btn-primary" style="width:100%" onclick="openGroupModal()">＋ Tạo nhóm</button>
-          <button class="btn btn-danger" style="width:100%" onclick="nukeAllChats()">💥 Xóa sạch tất cả chat</button>
-        </div>
-      </aside>
+<script>
+const SB_URL = 'https://gavjtqmtfwwciidorktt.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdhdmp0cW10Znd3Y2lpZG9ya3R0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyOTI0NDcsImV4cCI6MjEwMzg2ODQ0N30.ViYL2R3BXi-t6C7W3XBG9HvS_qTI9GOEAdGxwXu7kNs';
 
-      <main class="main-content">
-        <div class="profile-view" id="profileView">
-          <div class="cover" onclick="document.getElementById('coverInput').click()">
-            <img id="coverImg" src="" alt="" style="display:none">
-            <div class="cover-overlay">📷 Đổi ảnh bìa</div>
-          </div>
-          <input type="file" id="coverInput" class="hidden-input" accept="image/*" onchange="uploadCover(event)">
-          <div class="profile-info">
-            <div class="avatar-wrap" onclick="document.getElementById('avtInput').click()">
-              <img id="profileAvt" src="" alt="" style="display:none">
-              <div class="avt-ph" id="profileAvtPh"></div>
-              <div class="avatar-overlay">📷 Đổi ảnh</div>
-            </div>
-            <input type="file" id="avtInput" class="hidden-input" accept="image/*" onchange="uploadAvatar(event)">
-            <h2 class="profile-name" id="profileName">Tên</h2>
-            <div class="profile-username" id="profileUsername">@username</div>
-            <div class="profile-stats">
-              <div class="stat"><div class="num" id="statFriends">0</div><div class="label">Bạn bè</div></div>
-              <div class="stat"><div class="num" id="statGroups">0</div><div class="label">Nhóm</div></div>
-              <div class="stat"><div class="num" id="statChats">0</div><div class="label">Cuộc trò chuyện</div></div>
-            </div>
-            <p style="color:var(--muted);max-width:460px;font-size:0.94rem">Đây là trang cá nhân của bạn. Nhấn vào ảnh bìa hoặc avatar để tải ảnh lên. Dùng thanh tìm kiếm để tìm người dùng khác trên mọi thiết bị.</p>
-          </div>
-        </div>
+let sb = null, me = null, isReg = true, curChat = null, pollTimer = null, usersCache = [];
 
-        <div class="chat-view" id="chatView">
-          <div class="chat-header">
-            <div class="chat-header-left">
-              <div class="avt-ph" id="chatAvt" style="width:42px;height:42px"></div>
-              <div>
-                <div class="name" id="chatName">Tên</div>
-                <div class="status">Đang hoạt động</div>
-              </div>
-            </div>
-            <button class="btn btn-danger" style="padding:0.5rem 0.95rem;font-size:0.84rem" onclick="nukeCurrentChat()">💥 Xóa sạch đoạn chat</button>
-          </div>
-          <div class="chat-messages" id="chatMessages"></div>
-          <div class="chat-input-area">
-            <input type="text" id="msgInput" placeholder="Nhập tin nhắn..." onkeydown="if(event.key==='Enter')sendMessage()">
-            <button class="btn btn-primary" onclick="sendMessage()">Gửi</button>
-          </div>
-        </div>
-
-        <div class="empty-chat" id="emptyState" style="display:none">
-          <div class="icon">💬</div>
-          <h3>Chọn một cuộc trò chuyện</h3>
-          <p>Hoặc tìm người dùng ở thanh tìm kiếm để bắt đầu nhắn tin</p>
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <div class="toast" id="toast"></div>
-
-  <script>
-    // ===== STATE & UI (always available) =====
-    let currentUser = null;
-    let isRegisterMode = true;
-    let currentChatId = null;
-    let messageSubscription = null;
-    let allUsersCache = [];
-    let supabaseClient = null;
-
-    const SUPABASE_URL = 'https://gavjtqmtfwwciidorktt.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdhdmp0cW10Znd3Y2lpZG9ya3R0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyOTI0NDcsImV4cCI6MjEwMzg2ODQ0N30.ViYL2R3BXi-t6C7W3XBG9HvS_qTI9GOEAdGxwXu7kNs';
-
-    function initSupabase() {
-      try {
-        if (window.supabase && window.supabase.createClient) {
-          supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-          console.log('[FGTGRAM] Supabase connected');
-          return true;
-        }
-      } catch (e) { console.error(e); }
-      return false;
+function initSB() {
+  try {
+    if (window.supabase && window.supabase.createClient) {
+      sb = window.supabase.createClient(SB_URL, SB_KEY);
+      console.log('[FGT] Supabase OK');
+      return true;
     }
+  } catch (e) { console.error(e); }
+  return false;
+}
+if (!initSB()) { setTimeout(initSB, 500); setTimeout(initSB, 1500); }
 
-    // Try immediately + retry
-    if (!initSupabase()) {
-      setTimeout(initSupabase, 800);
-      setTimeout(initSupabase, 2000);
-    }
+/* AUTH */
+function openAuth(mode) {
+  isReg = mode === 'register';
+  document.getElementById('authTitle').textContent = isReg ? 'Đăng ký' : 'Đăng nhập';
+  document.getElementById('authSub').textContent = isReg ? 'Tạo tài khoản ẩn danh' : 'Chào mừng trở lại';
+  document.getElementById('authBtn').textContent = isReg ? 'Đăng ký' : 'Đăng nhập';
+  document.getElementById('nameFg').style.display = isReg ? 'block' : 'none';
+  document.getElementById('swText').textContent = isReg ? 'Đã có tài khoản?' : 'Chưa có tài khoản?';
+  document.getElementById('swLink').textContent = isReg ? 'Đăng nhập' : 'Đăng ký';
+  document.getElementById('authErr').style.display = 'none';
+  document.getElementById('authModal').classList.add('show');
+}
+function closeAuth() { document.getElementById('authModal').classList.remove('show'); }
+function toggleAuth() { openAuth(isReg ? 'login' : 'register'); }
+function showErr(m) { const e = document.getElementById('authErr'); e.textContent = m; e.style.display = 'block'; }
 
-    function openModal(mode) {
-      isRegisterMode = mode === 'register';
-      updateAuthUI();
-      document.getElementById('authModal').classList.add('active');
-      document.getElementById('authError').style.display = 'none';
-      document.getElementById('authForm').reset();
+async function handleAuth(e) {
+  e.preventDefault();
+  if (!sb && !initSB()) { showErr('Đang kết nối server... thử lại sau 2s'); return; }
+  const name = document.getElementById('fName').value.trim();
+  const user = document.getElementById('fUser').value.trim().toLowerCase();
+  const email = document.getElementById('fEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('fPass').value;
+  const btn = document.getElementById('authBtn');
+  btn.disabled = true; btn.textContent = 'Đang xử lý...';
+  try {
+    if (isReg) {
+      if (!name) { showErr('Nhập tên hiển thị'); return; }
+      const { data: eu } = await sb.from('users').select('id').eq('username', user).maybeSingle();
+      if (eu) { showErr('Username đã tồn tại'); return; }
+      const { data: ee } = await sb.from('users').select('id').eq('email', email).maybeSingle();
+      if (ee) { showErr('Email đã dùng'); return; }
+      const { data, error } = await sb.from('users').insert({ display_name: name, username: user, email, password: pass }).select().single();
+      if (error) throw error;
+      me = data;
+    } else {
+      let q = sb.from('users').select('*');
+      q = user.includes('@') ? q.eq('email', user) : q.eq('username', user);
+      const { data, error } = await q.maybeSingle();
+      if (error) throw error;
+      if (!data || data.password !== pass) { showErr('Sai tài khoản hoặc mật khẩu'); return; }
+      me = data;
     }
-    function closeModal() {
-      document.getElementById('authModal').classList.remove('active');
-    }
-    function toggleAuthMode() {
-      isRegisterMode = !isRegisterMode;
-      updateAuthUI();
-      document.getElementById('authError').style.display = 'none';
-    }
-    function updateAuthUI() {
-      document.getElementById('modalTitle').textContent = isRegisterMode ? 'Đăng ký' : 'Đăng nhập';
-      document.getElementById('modalSub').textContent = isRegisterMode ? 'Tạo tài khoản ẩn danh trong vài giây' : 'Chào mừng trở lại';
-      document.getElementById('authSubmitBtn').textContent = isRegisterMode ? 'Đăng ký' : 'Đăng nhập';
-      document.getElementById('nameGroup').style.display = isRegisterMode ? 'block' : 'none';
-      document.getElementById('switchText').textContent = isRegisterMode ? 'Đã có tài khoản?' : 'Chưa có tài khoản?';
-      document.getElementById('switchLink').textContent = isRegisterMode ? 'Đăng nhập' : 'Đăng ký';
-      document.getElementById('displayName').required = isRegisterMode;
-    }
-    function showError(msg) {
-      const el = document.getElementById('authError');
-      el.textContent = msg;
-      el.style.display = 'block';
-    }
-    function showToast(msg, type) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast ' + (type || 'success') + ' show';
-      setTimeout(() => t.classList.remove('show'), 3200);
-    }
-    function escapeHtml(text) {
-      if (!text) return '';
-      const d = document.createElement('div');
-      d.textContent = text;
-      return d.innerHTML;
-    }
-    function formatTime(ts) {
-      const d = new Date(ts), now = new Date();
-      if (d.toDateString() === now.toDateString())
-        return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-      return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
-    }
+    localStorage.setItem('fgt_me', JSON.stringify(me));
+    closeAuth();
+    enterApp();
+    toast(isReg ? 'Đăng ký thành công! 🎉' : 'Đăng nhập thành công!');
+  } catch (err) {
+    showErr(err.message || 'Lỗi, thử lại');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = isReg ? 'Đăng ký' : 'Đăng nhập';
+  }
+}
 
-    // ===== AUTH =====
-    async function handleAuth(e) {
-      e.preventDefault();
-      if (!supabaseClient) {
-        initSupabase();
-        if (!supabaseClient) {
-          showError('Đang kết nối server... Đợi 2 giây rồi thử lại');
-          return;
-        }
-      }
-      const displayName = document.getElementById('displayName').value.trim();
-      const username = document.getElementById('username').value.trim().toLowerCase();
-      const email = document.getElementById('email').value.trim().toLowerCase();
-      const password = document.getElementById('password').value;
-      const btn = document.getElementById('authSubmitBtn');
-      btn.disabled = true;
-      btn.textContent = 'Đang xử lý...';
+function logout() {
+  me = null; curChat = null;
+  localStorage.removeItem('fgt_me');
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('landing').style.display = 'flex';
+  toast('Đã đăng xuất');
+}
 
-      try {
-        if (isRegisterMode) {
-          if (!displayName) { showError('Vui lòng nhập tên hiển thị'); return; }
-          const { data: existU } = await supabaseClient.from('users').select('id').eq('username', username).maybeSingle();
-          if (existU) { showError('Username đã tồn tại, hãy chọn tên khác'); return; }
-          const { data: existE } = await supabaseClient.from('users').select('id').eq('email', email).maybeSingle();
-          if (existE) { showError('Email đã được sử dụng'); return; }
+/* APP */
+function enterApp() {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  updateNav();
+  goPage('feed');
+  loadUsers();
+}
 
-          const { data: newUser, error } = await supabaseClient.from('users').insert({
-            display_name: displayName, username, email, password, avt: null, cover: null
-          }).select().single();
-          if (error) throw error;
-          currentUser = newUser;
-          localStorage.setItem('fgt_session', JSON.stringify(currentUser));
-          showToast('Đăng ký thành công! 🎉', 'success');
-        } else {
-          let q = supabaseClient.from('users').select('*');
-          q = username.includes('@') ? q.eq('email', username) : q.eq('username', username);
-          const { data: user, error } = await q.maybeSingle();
-          if (error) throw error;
-          if (!user || user.password !== password) {
-            showError('Sai username/email hoặc mật khẩu');
-            return;
-          }
-          currentUser = user;
-          localStorage.setItem('fgt_session', JSON.stringify(currentUser));
-          showToast('Đăng nhập thành công!', 'success');
-        }
-        closeModal();
-        enterApp();
-      } catch (err) {
-        console.error(err);
-        showError(err.message || 'Có lỗi xảy ra, thử lại sau');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = isRegisterMode ? 'Đăng ký' : 'Đăng nhập';
-      }
+function updateNav() {
+  if (!me) return;
+  document.getElementById('navName').textContent = me.display_name;
+  const ini = me.display_name.charAt(0).toUpperCase();
+  const setAv = (el) => {
+    if (me.avt) el.innerHTML = '<img src="' + me.avt + '">';
+    else el.textContent = ini;
+  };
+  setAv(document.getElementById('navAv'));
+  setAv(document.getElementById('createAv'));
+  document.getElementById('profName').textContent = me.display_name;
+  document.getElementById('profUser').textContent = '@' + me.username;
+  const ph = document.getElementById('profAvPh');
+  const img = document.getElementById('profAvImg');
+  if (me.avt) { img.src = me.avt; img.classList.remove('hidden'); ph.classList.add('hidden'); }
+  else { img.classList.add('hidden'); ph.classList.remove('hidden'); ph.textContent = ini; }
+  if (me.cover) {
+    document.getElementById('profCover').src = me.cover;
+    document.getElementById('profCover').classList.remove('hidden');
+  }
+}
+
+function goPage(page) {
+  document.getElementById('pageFeed').style.display = page === 'feed' ? 'block' : 'none';
+  document.getElementById('pageMsg').classList.toggle('show', page === 'messages');
+  document.getElementById('pageProfile').classList.toggle('show', page === 'profile');
+  ['sideFeed','sideMsg','sideProf','navFeed','navMsg','bnFeed','bnMsg','bnProf'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.classList.remove('active');
+  });
+  if (page === 'feed') {
+    document.getElementById('sideFeed')?.classList.add('active');
+    document.getElementById('navFeed')?.classList.add('active');
+    document.getElementById('bnFeed')?.classList.add('active');
+    loadPosts();
+  }
+  if (page === 'messages') {
+    document.getElementById('sideMsg')?.classList.add('active');
+    document.getElementById('navMsg')?.classList.add('active');
+    document.getElementById('bnMsg')?.classList.add('active');
+    showMsgList();
+  }
+  if (page === 'profile') {
+    document.getElementById('sideProf')?.classList.add('active');
+    document.getElementById('bnProf')?.classList.add('active');
+    updateNav(); updateStats();
+  }
+}
+
+/* POSTS */
+function openPostModal() {
+  document.getElementById('postModal').classList.add('show');
+  document.getElementById('postContent').value = '';
+  document.getElementById('postImg').value = '';
+}
+function closePostModal() { document.getElementById('postModal').classList.remove('show'); }
+
+async function submitPost() {
+  if (!sb || !me) return;
+  const text = document.getElementById('postContent').value.trim();
+  if (!text) { toast('Nhập nội dung bài viết'); return; }
+  let img = null;
+  const file = document.getElementById('postImg').files[0];
+  if (file) img = await readFile(file);
+  const { error } = await sb.from('posts').insert({ user_id: me.id, content: text, image: img, likes: [] });
+  if (error) {
+    toast(error.message.includes('posts') ? 'Chưa tạo bảng posts — chạy SQL hướng dẫn' : error.message);
+    return;
+  }
+  closePostModal();
+  toast('Đã đăng bài!');
+  loadPosts();
+}
+
+async function loadPosts() {
+  if (!sb) return;
+  const list = document.getElementById('postsList');
+  const { data: posts, error } = await sb.from('posts').select('*').order('created_at', { ascending: false }).limit(50);
+  if (error || !posts || !posts.length) {
+    list.innerHTML = '<div class="empty"><div class="ic">📝</div>Chưa có bài viết nào. Hãy đăng bài đầu tiên!</div>';
+    return;
+  }
+  await loadUsers();
+  list.innerHTML = posts.map(p => {
+    const u = usersCache.find(x => x.id === p.user_id) || { display_name: 'User', avt: null };
+    const ini = (u.display_name || '?').charAt(0).toUpperCase();
+    const av = u.avt ? '<img src="' + u.avt + '">' : ini;
+    const liked = (p.likes || []).includes(me.id);
+    const lc = (p.likes || []).length;
+    return '<div class="post"><div class="post-head"><div class="av">' + av + '</div><div><div class="name">' + esc(u.display_name) + '</div><div class="time">' + timeAgo(p.created_at) + '</div></div></div><div class="post-body">' + esc(p.content) + '</div>' + (p.image ? '<img class="post-img" src="' + p.image + '">' : '') + '<div class="post-stats"><span>' + lc + ' thích</span></div><div class="post-actions"><button class="post-act ' + (liked ? 'liked' : '') + '" onclick="toggleLike(\'' + p.id + '\')">' + (liked ? '❤️' : '🤍') + ' Thích</button></div></div>';
+  }).join('');
+}
+
+async function toggleLike(postId) {
+  if (!sb || !me) return;
+  const { data: post } = await sb.from('posts').select('likes').eq('id', postId).single();
+  if (!post) return;
+  let likes = post.likes || [];
+  if (likes.includes(me.id)) likes = likes.filter(id => id !== me.id);
+  else likes.push(me.id);
+  await sb.from('posts').update({ likes }).eq('id', postId);
+  loadPosts();
+}
+
+/* SEARCH + CHAT */
+async function loadUsers() {
+  if (!sb) return;
+  const { data } = await sb.from('users').select('id, display_name, username, avt');
+  usersCache = data || [];
+}
+
+async function doSearch(q) {
+  const drop = document.getElementById('searchDrop');
+  if (!q || q.length < 1) { drop.classList.remove('show'); return; }
+  await loadUsers();
+  const m = usersCache.filter(u => u.id !== me.id && (u.username.includes(q.toLowerCase()) || u.display_name.toLowerCase().includes(q.toLowerCase()))).slice(0, 8);
+  if (!m.length) drop.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--muted)">Không tìm thấy</div>';
+  else {
+    drop.innerHTML = m.map(u => {
+      const ini = u.display_name.charAt(0).toUpperCase();
+      const av = u.avt ? '<img src="' + u.avt + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover">' : '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem">' + ini + '</div>';
+      return '<div class="s-item" onclick="startChat(\'' + u.id + '\')">' + av + '<div><div style="font-weight:600;font-size:0.9rem">' + esc(u.display_name) + '</div><div style="font-size:0.78rem;color:var(--muted)">@' + u.username + '</div></div></div>';
+    }).join('');
+  }
+  drop.classList.add('show');
+}
+document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) document.getElementById('searchDrop').classList.remove('show'); });
+
+async function startChat(uid) {
+  document.getElementById('searchDrop').classList.remove('show');
+  document.getElementById('searchInput').value = '';
+  const { data: ex } = await sb.from('chats').select('*').eq('is_group', false).contains('members', [me.id]).contains('members', [uid]);
+  let cid;
+  if (ex && ex.length) cid = ex[0].id;
+  else {
+    const other = usersCache.find(u => u.id === uid);
+    const { data: nc, error } = await sb.from('chats').insert({ is_group: false, name: other ? other.display_name : 'Chat', members: [me.id, uid] }).select().single();
+    if (error) { toast('Lỗi tạo chat'); return; }
+    cid = nc.id;
+  }
+  goPage('messages');
+  openChat(cid);
+}
+
+function showMsgList() {
+  document.getElementById('msgListView').style.display = 'block';
+  document.getElementById('msgChatView').classList.remove('show');
+  curChat = null;
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  renderChatList();
+}
+function backToList() { showMsgList(); }
+
+async function renderChatList() {
+  const list = document.getElementById('chatList');
+  const { data: chats } = await sb.from('chats').select('*').contains('members', [me.id]).order('created_at', { ascending: false });
+  if (!chats || !chats.length) {
+    list.innerHTML = '<div class="empty"><div class="ic">💬</div>Chưa có cuộc trò chuyện.<br>Tìm người dùng để nhắn tin!</div>';
+    return;
+  }
+  await loadUsers();
+  const ids = chats.map(c => c.id);
+  const { data: msgs } = await sb.from('messages').select('*').in('chat_id', ids).order('created_at', { ascending: false });
+  const lastMap = {};
+  (msgs || []).forEach(m => { if (!lastMap[m.chat_id]) lastMap[m.chat_id] = m; });
+  chats.sort((a, b) => new Date(lastMap[b.id]?.created_at || b.created_at) - new Date(lastMap[a.id]?.created_at || a.created_at));
+
+  list.innerHTML = chats.map(c => {
+    let name = c.name, av = '👥';
+    if (!c.is_group) {
+      const oid = c.members.find(m => m !== me.id);
+      const o = usersCache.find(u => u.id === oid);
+      if (o) { name = o.display_name; av = o.display_name.charAt(0).toUpperCase(); }
     }
+    const last = lastMap[c.id];
+    const pv = last ? ((last.sender_id === me.id ? 'Bạn: ' : '') + last.text) : 'Chưa có tin nhắn';
+    return '<div class="chat-item" onclick="openChat(\'' + c.id + '\')"><div class="av">' + av + '</div><div class="info"><div class="nm">' + esc(name) + '</div><div class="pv">' + esc(pv) + '</div></div></div>';
+  }).join('');
+}
 
-    function logout() {
-      currentUser = null;
-      currentChatId = null;
-      localStorage.removeItem('fgt_session');
-      if (messageSubscription) {
-        supabaseClient.removeChannel(messageSubscription);
-        messageSubscription = null;
-      }
-      document.getElementById('app').classList.remove('active');
-      document.getElementById('landing').style.display = 'flex';
-      showToast('Đã đăng xuất', 'success');
-    }
+async function openChat(cid) {
+  curChat = cid;
+  document.getElementById('msgListView').style.display = 'none';
+  document.getElementById('msgChatView').classList.add('show');
+  const { data: c } = await sb.from('chats').select('*').eq('id', cid).single();
+  if (!c) return;
+  let name = c.name, av = '👥';
+  if (!c.is_group) {
+    const oid = c.members.find(m => m !== me.id);
+    const o = usersCache.find(u => u.id === oid);
+    if (o) { name = o.display_name; av = o.display_name.charAt(0).toUpperCase(); }
+  }
+  document.getElementById('chatName').textContent = name;
+  document.getElementById('chatAv').textContent = av;
+  await renderMsgs();
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(() => { if (curChat === cid) renderMsgs(); }, 2500);
+}
 
-    // ===== APP =====
-    async function enterApp() {
-      document.getElementById('landing').style.display = 'none';
-      document.getElementById('app').classList.add('active');
-      updateProfileUI();
-      await renderChatList();
-      switchTab('profile');
-      loadAllUsers();
-    }
+async function renderMsgs() {
+  const box = document.getElementById('chatMsgs');
+  const { data: msgs } = await sb.from('messages').select('*').eq('chat_id', curChat).order('created_at', { ascending: true });
+  if (!msgs || !msgs.length) { box.innerHTML = '<div class="empty" style="padding:2rem">Chưa có tin nhắn</div>'; return; }
+  box.innerHTML = msgs.map(m => {
+    const isMe = m.sender_id === me.id;
+    return '<div class="bubble ' + (isMe ? 'me' : 'them') + '">' + esc(m.text) + '<div class="t">' + fmtTime(m.created_at) + '</div></div>';
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
 
-    function updateProfileUI() {
-      if (!currentUser) return;
-      document.getElementById('headerName').textContent = currentUser.display_name;
-      document.getElementById('profileName').textContent = currentUser.display_name;
-      document.getElementById('profileUsername').textContent = '@' + currentUser.username;
-      const initials = currentUser.display_name.charAt(0).toUpperCase();
+async function sendMsg() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text || !curChat) return;
+  input.value = '';
+  const box = document.getElementById('chatMsgs');
+  const empty = box.querySelector('.empty');
+  if (empty) box.innerHTML = '';
+  box.insertAdjacentHTML('beforeend', '<div class="bubble me">' + esc(text) + '<div class="t">vừa xong</div></div>');
+  box.scrollTop = box.scrollHeight;
+  const { error } = await sb.from('messages').insert({ chat_id: curChat, sender_id: me.id, text });
+  if (error) { toast('Gửi thất bại'); input.value = text; }
+  else renderChatList();
+}
 
-      if (currentUser.avt) {
-        document.getElementById('headerAvt').src = currentUser.avt;
-        document.getElementById('headerAvt').style.display = 'block';
-        document.getElementById('headerAvtPh').style.display = 'none';
-        document.getElementById('profileAvt').src = currentUser.avt;
-        document.getElementById('profileAvt').style.display = 'block';
-        document.getElementById('profileAvtPh').style.display = 'none';
-      } else {
-        document.getElementById('headerAvt').style.display = 'none';
-        const ph = document.getElementById('headerAvtPh');
-        ph.style.display = 'flex'; ph.textContent = initials;
-        ph.style.background = 'linear-gradient(135deg,#8b5cf6,#22d3ee)';
-        ph.style.alignItems = 'center'; ph.style.justifyContent = 'center'; ph.style.fontWeight = '700';
-        document.getElementById('profileAvt').style.display = 'none';
-        const pph = document.getElementById('profileAvtPh');
-        pph.style.display = 'flex'; pph.textContent = initials;
-      }
-      if (currentUser.cover) {
-        document.getElementById('coverImg').src = currentUser.cover;
-        document.getElementById('coverImg').style.display = 'block';
-      } else {
-        document.getElementById('coverImg').style.display = 'none';
-      }
-    }
+async function nukeCurrentChat() {
+  if (!curChat || !confirm('Xóa sạch đoạn chat này? Không thể hoàn tác!')) return;
+  await sb.from('messages').delete().eq('chat_id', curChat);
+  await renderMsgs();
+  toast('Đã xóa sạch');
+}
+async function nukeAllChats() {
+  if (!confirm('Xóa TẤT CẢ tin nhắn? Không thể hoàn tác!')) return;
+  const { data: chats } = await sb.from('chats').select('id').contains('members', [me.id]);
+  if (chats && chats.length) await sb.from('messages').delete().in('chat_id', chats.map(c => c.id));
+  renderChatList();
+  if (curChat) renderMsgs();
+  toast('Đã xóa hết tin nhắn');
+}
 
-    async function updateStats() {
-      if (!supabaseClient || !currentUser) return;
-      const { data: myChats } = await supabaseClient.from('chats').select('id, is_group').contains('members', [currentUser.id]);
-      if (!myChats) return;
-      const groupCount = myChats.filter(c => c.is_group).length;
-      document.getElementById('statChats').textContent = myChats.length;
-      document.getElementById('statGroups').textContent = groupCount;
-      document.getElementById('statFriends').textContent = Math.max(0, myChats.length - groupCount);
-    }
+/* PROFILE */
+async function upAv(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const b64 = await readFile(f);
+  await sb.from('users').update({ avt: b64 }).eq('id', me.id);
+  me.avt = b64; localStorage.setItem('fgt_me', JSON.stringify(me));
+  updateNav(); toast('Đã đổi ảnh đại diện');
+}
+async function upCover(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const b64 = await readFile(f);
+  await sb.from('users').update({ cover: b64 }).eq('id', me.id);
+  me.cover = b64; localStorage.setItem('fgt_me', JSON.stringify(me));
+  updateNav(); toast('Đã đổi ảnh bìa');
+}
+async function updateStats() {
+  if (!sb || !me) return;
+  const { data: posts } = await sb.from('posts').select('id').eq('user_id', me.id);
+  const { data: chats } = await sb.from('chats').select('id').contains('members', [me.id]);
+  document.getElementById('stPosts').textContent = posts ? posts.length : 0;
+  document.getElementById('stChats').textContent = chats ? chats.length : 0;
+}
 
-    async function uploadAvatar(e) {
-      const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async (ev) => {
-        const base64 = ev.target.result;
-        const { error } = await supabaseClient.from('users').update({ avt: base64 }).eq('id', currentUser.id);
-        if (error) { showToast('Lỗi cập nhật ảnh', 'error'); return; }
-        currentUser.avt = base64;
-        localStorage.setItem('fgt_session', JSON.stringify(currentUser));
-        updateProfileUI();
-        showToast('Đã cập nhật ảnh đại diện', 'success');
-      };
-      reader.readAsDataURL(file);
-    }
-    async function uploadCover(e) {
-      const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async (ev) => {
-        const base64 = ev.target.result;
-        const { error } = await supabaseClient.from('users').update({ cover: base64 }).eq('id', currentUser.id);
-        if (error) { showToast('Lỗi cập nhật ảnh bìa', 'error'); return; }
-        currentUser.cover = base64;
-        localStorage.setItem('fgt_session', JSON.stringify(currentUser));
-        updateProfileUI();
-        showToast('Đã cập nhật ảnh bìa', 'success');
-      };
-      reader.readAsDataURL(file);
-    }
+/* UTILS */
+function readFile(f) { return new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(f); }); }
+function esc(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+function fmtTime(ts) {
+  const d = new Date(ts), n = new Date();
+  if (d.toDateString() === n.toDateString()) return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+}
+function timeAgo(ts) {
+  const s = (Date.now() - new Date(ts).getTime()) / 1000;
+  if (s < 60) return 'Vừa xong';
+  if (s < 3600) return Math.floor(s / 60) + ' phút';
+  if (s < 86400) return Math.floor(s / 3600) + ' giờ';
+  return Math.floor(s / 86400) + ' ngày';
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show';
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
 
-    function switchTab(tab) {
-      document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('active'));
-      document.querySelector('.sidebar-tab[data-tab="'+tab+'"]').classList.add('active');
-      if (tab === 'profile') {
-        document.getElementById('profileView').style.display = 'block';
-        document.getElementById('chatView').classList.remove('active');
-        document.getElementById('emptyState').style.display = 'none';
-        currentChatId = null;
-        updateStats();
-      } else {
-        document.getElementById('profileView').style.display = 'none';
-        if (!currentChatId) {
-          document.getElementById('chatView').classList.remove('active');
-          document.getElementById('emptyState').style.display = 'flex';
-        }
-      }
-    }
-    function showProfile() { switchTab('profile'); }
-
-    // ===== SEARCH =====
-    async function loadAllUsers() {
-      if (!supabaseClient) return;
-      const { data } = await supabaseClient.from('users').select('id, display_name, username, avt');
-      allUsersCache = data || [];
-    }
-    async function searchUsers(query) {
-      const results = document.getElementById('searchResults');
-      if (!query || query.length < 1) { results.classList.remove('active'); return; }
-      await loadAllUsers();
-      const q = query.toLowerCase();
-      const matches = allUsersCache.filter(u =>
-        u.id !== currentUser.id && (u.username.includes(q) || u.display_name.toLowerCase().includes(q))
-      ).slice(0, 8);
-      if (matches.length === 0) {
-        results.innerHTML = '<div style="padding:1rem;color:var(--muted);text-align:center">Không tìm thấy</div>';
-      } else {
-        results.innerHTML = matches.map(u => {
-          const initials = u.display_name.charAt(0).toUpperCase();
-          const avt = u.avt
-            ? '<img src="'+u.avt+'" alt="">'
-            : '<div class="avt-ph" style="background:linear-gradient(135deg,#8b5cf6,#22d3ee)">'+initials+'</div>';
-          return '<div class="search-item" onclick="startChatWith(\''+u.id+'\')">'+avt+
-            '<div><div style="font-weight:600">'+escapeHtml(u.display_name)+'</div>'+
-            '<div style="font-size:0.8rem;color:var(--muted)">@'+u.username+'</div></div></div>';
-        }).join('');
-      }
-      results.classList.add('active');
-    }
-    document.addEventListener('click', e => {
-      if (!e.target.closest('.search-bar')) document.getElementById('searchResults').classList.remove('active');
-    });
-
-    async function startChatWith(userId) {
-      document.getElementById('searchResults').classList.remove('active');
-      document.getElementById('userSearch').value = '';
-      const { data: existing } = await supabaseClient.from('chats').select('*')
-        .eq('is_group', false).contains('members', [currentUser.id]).contains('members', [userId]);
-      let chatId;
-      if (existing && existing.length > 0) {
-        chatId = existing[0].id;
-      } else {
-        const other = allUsersCache.find(u => u.id === userId);
-        const { data: newChat, error } = await supabaseClient.from('chats').insert({
-          is_group: false, name: other ? other.display_name : 'Chat', members: [currentUser.id, userId]
-        }).select().single();
-        if (error) { showToast('Lỗi tạo chat: '+error.message, 'error'); return; }
-        chatId = newChat.id;
-      }
-      openChat(chatId);
-      await renderChatList();
-      updateStats();
-    }
-
-    // ===== CHATS =====
-    async function renderChatList() {
-      const list = document.getElementById('chatList');
-      if (!supabaseClient || !currentUser) return;
-      const { data: myChats, error } = await supabaseClient.from('chats').select('*')
-        .contains('members', [currentUser.id]).order('created_at', { ascending: false });
-      if (error || !myChats || myChats.length === 0) {
-        list.innerHTML = '<div style="padding:2rem 1rem;text-align:center;color:var(--muted);font-size:0.9rem">Chưa có cuộc trò chuyện nào.<br>Hãy tìm người dùng để bắt đầu!</div>';
-        return;
-      }
-      const chatIds = myChats.map(c => c.id);
-      const { data: lastMsgs } = await supabaseClient.from('messages').select('*')
-        .in('chat_id', chatIds).order('created_at', { ascending: false });
-      const lastMsgMap = {};
-      if (lastMsgs) lastMsgs.forEach(m => { if (!lastMsgMap[m.chat_id]) lastMsgMap[m.chat_id] = m; });
-      myChats.sort((a,b) => new Date(lastMsgMap[b.id]?.created_at || b.created_at) - new Date(lastMsgMap[a.id]?.created_at || a.created_at));
-      await loadAllUsers();
-
-      list.innerHTML = myChats.map(c => {
-        const lastMsg = lastMsgMap[c.id];
-        let displayName = c.name, avtHtml = '';
-        if (!c.is_group) {
-          const otherId = c.members.find(m => m !== currentUser.id);
-          const other = allUsersCache.find(u => u.id === otherId);
-          if (other) {
-            displayName = other.display_name;
-            const initials = other.display_name.charAt(0).toUpperCase();
-            avtHtml = other.avt
-              ? '<img src="'+other.avt+'" alt="">'
-              : '<div class="avt-ph" style="background:linear-gradient(135deg,#8b5cf6,#22d3ee)">'+initials+'</div>';
-          }
-        } else {
-          avtHtml = '<div class="avt-ph" style="background:linear-gradient(135deg,#f472b6,#8b5cf6)">👥</div>';
-        }
-        const timeStr = lastMsg ? formatTime(lastMsg.created_at) : '';
-        const preview = lastMsg ? ((lastMsg.sender_id === currentUser.id ? 'Bạn: ' : '') + lastMsg.text) : 'Chưa có tin nhắn';
-        return '<div class="chat-item '+(currentChatId===c.id?'active':'')+'" onclick="openChat(\''+c.id+'\')">'+
-          avtHtml+'<div class="chat-item-info"><div class="top"><span class="name">'+escapeHtml(displayName)+
-          '</span><span class="time">'+timeStr+'</span></div><div class="preview">'+escapeHtml(preview)+'</div></div></div>';
-      }).join('');
-    }
-
-    async function openChat(chatId) {
-      currentChatId = chatId;
-      if (messageSubscription) {
-        supabaseClient.removeChannel(messageSubscription);
-        messageSubscription = null;
-      }
-      const { data: c } = await supabaseClient.from('chats').select('*').eq('id', chatId).single();
-      if (!c) return;
-      document.getElementById('profileView').style.display = 'none';
-      document.getElementById('emptyState').style.display = 'none';
-      document.getElementById('chatView').classList.add('active');
-      document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('active'));
-      document.querySelector('.sidebar-tab[data-tab="chats"]').classList.add('active');
-
-      let displayName = c.name, avtContent = '👥';
-      if (!c.is_group) {
-        const otherId = c.members.find(m => m !== currentUser.id);
-        const other = allUsersCache.find(u => u.id === otherId);
-        if (other) { displayName = other.display_name; avtContent = other.display_name.charAt(0).toUpperCase(); }
-      }
-      document.getElementById('chatName').textContent = displayName;
-      const chatAvt = document.getElementById('chatAvt');
-      chatAvt.textContent = avtContent;
-      chatAvt.style.background = c.is_group ? 'linear-gradient(135deg,#f472b6,#8b5cf6)' : 'linear-gradient(135deg,#8b5cf6,#22d3ee)';
-      chatAvt.style.display = 'flex'; chatAvt.style.alignItems = 'center'; chatAvt.style.justifyContent = 'center'; chatAvt.style.fontWeight = '700';
-
-      await renderMessages();
-      await renderChatList();
-
-      messageSubscription = supabaseClient.channel('msg-'+chatId)
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: 'chat_id=eq.'+chatId },
-          () => { renderMessages(); renderChatList(); })
-        .subscribe();
-    }
-
-    async function renderMessages() {
-      const box = document.getElementById('chatMessages');
-      const { data: messages } = await supabaseClient.from('messages').select('*')
-        .eq('chat_id', currentChatId).order('created_at', { ascending: true });
-      if (!messages || messages.length === 0) {
-        box.innerHTML = '<div style="text-align:center;color:var(--muted);padding:3rem 1rem">Chưa có tin nhắn. Hãy gửi tin đầu tiên!</div>';
-        return;
-      }
-      box.innerHTML = messages.map(m => {
-        const isMe = m.sender_id === currentUser.id;
-        return '<div class="msg '+(isMe?'sent':'received')+'">'+escapeHtml(m.text)+
-          '<div class="time">'+formatTime(m.created_at)+'</div></div>';
-      }).join('');
-      box.scrollTop = box.scrollHeight;
-    }
-
-    async function sendMessage() {
-      const input = document.getElementById('msgInput');
-      const text = input.value.trim();
-      if (!text || !currentChatId) return;
-      input.value = '';
-      const { error } = await supabaseClient.from('messages').insert({
-        chat_id: currentChatId, sender_id: currentUser.id, text
-      });
-      if (error) { showToast('Gửi tin nhắn thất bại', 'error'); input.value = text; }
-    }
-
-    // ===== NUKE =====
-    async function nukeCurrentChat() {
-      if (!currentChatId) return;
-      if (!confirm('Bạn chắc chắn muốn XÓA SẠCH toàn bộ tin nhắn đoạn chat này?\nCả hai bên sẽ không còn thấy tin nhắn nào nữa.\nHành động này KHÔNG THỂ hoàn tác!')) return;
-      const { error } = await supabaseClient.from('messages').delete().eq('chat_id', currentChatId);
-      if (error) { showToast('Lỗi xóa tin nhắn', 'error'); return; }
-      await renderMessages(); await renderChatList();
-      showToast('Đã xóa sạch toàn bộ tin nhắn đoạn chat này', 'success');
-    }
-    async function nukeAllChats() {
-      if (!confirm('⚠️ CẢNH BÁO: Bạn sẽ XÓA SẠCH TẤT CẢ tin nhắn?\nHành động này KHÔNG THỂ hoàn tác!')) return;
-      const { data: myChats } = await supabaseClient.from('chats').select('id').contains('members', [currentUser.id]);
-      if (!myChats || myChats.length === 0) { showToast('Không có chat nào', 'success'); return; }
-      const { error } = await supabaseClient.from('messages').delete().in('chat_id', myChats.map(c => c.id));
-      if (error) { showToast('Lỗi xóa tin nhắn', 'error'); return; }
-      if (currentChatId) await renderMessages();
-      await renderChatList(); updateStats();
-      showToast('Đã xóa sạch tất cả tin nhắn', 'success');
-    }
-
-    // ===== GROUP =====
-    async function openGroupModal() {
-      await loadAllUsers();
-      const list = document.getElementById('memberList');
-      const others = allUsersCache.filter(u => u.id !== currentUser.id);
-      list.innerHTML = others.map(u => {
-        const initials = u.display_name.charAt(0).toUpperCase();
-        return '<label class="member-check"><input type="checkbox" value="'+u.id+'">'+
-          '<div class="avt-ph" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700">'+initials+'</div>'+
-          '<span>'+escapeHtml(u.display_name)+' <span style="color:var(--muted);font-size:0.8rem">@'+u.username+'</span></span></label>';
-      }).join('') || '<div style="padding:1rem;color:var(--muted);text-align:center">Chưa có người dùng khác</div>';
-      document.getElementById('groupName').value = '';
-      document.getElementById('groupModal').classList.add('active');
-    }
-    function closeGroupModal() { document.getElementById('groupModal').classList.remove('active'); }
-    async function createGroup() {
-      const name = document.getElementById('groupName').value.trim();
-      if (!name) { showToast('Vui lòng nhập tên nhóm', 'error'); return; }
-      const checked = [...document.querySelectorAll('#memberList input:checked')].map(el => el.value);
-      if (checked.length === 0) { showToast('Chọn ít nhất 1 thành viên', 'error'); return; }
-      const { data: newChat, error } = await supabaseClient.from('chats').insert({
-        is_group: true, name, members: [currentUser.id, ...checked]
-      }).select().single();
-      if (error) { showToast('Lỗi tạo nhóm: '+error.message, 'error'); return; }
-      closeGroupModal();
-      openChat(newChat.id);
-      await renderChatList();
-      updateStats();
-      showToast('Đã tạo nhóm "'+name+'"', 'success');
-    }
-
-    // Auto session
-    window.addEventListener('DOMContentLoaded', () => {
-      const session = localStorage.getItem('fgt_session');
-      if (session) {
-        try {
-          currentUser = JSON.parse(session);
-          if (!supabaseClient) initSupabase();
-          setTimeout(() => enterApp(), 300);
-        } catch(e) { localStorage.removeItem('fgt_session'); }
-      }
-    });
-  </script>
+window.addEventListener('DOMContentLoaded', () => {
+  const s = localStorage.getItem('fgt_me');
+  if (s) {
+    try { me = JSON.parse(s); if (!sb) initSB(); setTimeout(enterApp, 200); }
+    catch (e) { localStorage.removeItem('fgt_me'); }
+  }
+});
+</script>
 </body>
 </html>
