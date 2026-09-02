@@ -1,141 +1,761 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Tạm Biệt & Cảm Ơn</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            font-family: 'Cinzel', 'Playfair Display', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Georgia, serif;
-            /* Nền gradient sang trọng tông tối/vàng gold quý phái */
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 24px;
-            overflow: hidden;
-            position: relative;
-        }
+<title>FGTGRAM — Hẹn Ngày Trở Lại</title>
 
-        /* Hiệu ứng hạt sáng lung linh ẩn hiện phía sau */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 150%;
-            height: 150%;
-            background-image: radial-gradient(rgba(217, 119, 6, 0.1) 1px, transparent 0);
-            background-size: 40px 40px;
-            transform: rotate(15deg);
-            top: -25%;
-            left: -25%;
-            z-index: 1;
-            pointer-events: none;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap');
 
-        .card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 60px 40px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            max-width: 650px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 2;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        /* Biểu tượng chim hạc hoặc hoa văn tối giản biểu trưng cho sự chuyển giao */
-        .icon {
-            font-size: 32px;
-            margin-bottom: 24px;
-            color: #fbbf24;
-            letter-spacing: 2px;
-            opacity: 0.9;
-        }
+html {
+    scroll-behavior: smooth;
+}
 
-        h1 {
-            font-size: 28px;
-            font-weight: 400;
-            letter-spacing: 3px;
-            margin-bottom: 28px;
-            color: #ffffff;
-            text-transform: uppercase;
-            background: linear-gradient(to right, #ffffff 30%, #fde047 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+body {
+    background: #020202;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+}
 
-        p {
-            font-size: 16px;
-            line-height: 1.8;
-            color: #cbd5e1;
-            margin-bottom: 20px;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
+/* =========================
+   NỀN ÁNH SÁNG
+========================= */
 
-        .highlight {
-            color: #fde047;
-            font-weight: 400;
-        }
+.background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -2;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(212,175,55,0.13),
+            transparent 35%
+        ),
+        #020202;
+}
 
-        .see-you-again {
-            margin-top: 40px;
-            font-size: 20px;
-            font-style: italic;
-            color: #fde047;
-            letter-spacing: 2px;
-            position: relative;
-            display: inline-block;
-            padding-bottom: 8px;
-        }
+.glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
 
-        .see-you-again::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 25%;
-            width: 50%;
-            height: 1px;
-            background: linear-gradient(to right, transparent, #fde047, transparent);
-        }
+    background: rgba(212,175,55,0.08);
+    filter: blur(100px);
 
-        .footer {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 48px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-    </style>
+    animation: moveGlow 12s infinite alternate ease-in-out;
+}
+
+.glow.one {
+    top: -200px;
+    left: -150px;
+}
+
+.glow.two {
+    right: -200px;
+    bottom: -200px;
+    animation-delay: 3s;
+}
+
+@keyframes moveGlow {
+    0% {
+        transform: translate(0,0) scale(1);
+    }
+
+    100% {
+        transform: translate(150px,100px) scale(1.4);
+    }
+}
+
+/* =========================
+   HẠT SÁNG
+========================= */
+
+.particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+
+    width: 3px;
+    height: 3px;
+
+    background: #d4af37;
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 10px #d4af37;
+
+    opacity: 0;
+
+    animation: float 8s infinite ease-in-out;
+}
+
+@keyframes float {
+
+    0% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .7;
+    }
+
+    85% {
+        opacity: .5;
+    }
+
+    100% {
+        transform: translateY(-10vh);
+        opacity: 0;
+    }
+}
+
+/* =========================
+   CÁC SECTION
+========================= */
+
+section {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 80px 25px;
+
+    text-align: center;
+}
+
+/* =========================
+   TRANG ĐẦU
+========================= */
+
+.hero {
+    position: relative;
+}
+
+.hero-content {
+    max-width: 900px;
+
+    animation: appear 2s ease forwards;
+}
+
+.small-title {
+    font-size: 12px;
+    letter-spacing: 7px;
+    color: #a89969;
+
+    margin-bottom: 30px;
+}
+
+.logo {
+    font-family: 'Cormorant Garamond', serif;
+
+    font-size: clamp(70px, 15vw, 150px);
+
+    font-weight: 300;
+
+    letter-spacing: 15px;
+
+    background:
+        linear-gradient(
+            120deg,
+            #ffffff,
+            #d4af37,
+            #ffffff,
+            #d4af37
+        );
+
+    background-size: 300%;
+
+    -webkit-background-clip: text;
+    color: transparent;
+
+    animation:
+        goldShine 6s infinite linear,
+        logoFloat 5s infinite ease-in-out;
+}
+
+@keyframes goldShine {
+
+    0% {
+        background-position: 0%;
+    }
+
+    100% {
+        background-position: 300%;
+    }
+}
+
+@keyframes logoFloat {
+
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.subtitle {
+    margin-top: 25px;
+
+    color: #777;
+
+    font-size: 13px;
+
+    letter-spacing: 5px;
+}
+
+.scroll {
+    position: absolute;
+
+    bottom: 40px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    color: #777;
+
+    font-size: 10px;
+
+    letter-spacing: 4px;
+}
+
+.scroll::after {
+    content: "";
+
+    display: block;
+
+    width: 1px;
+    height: 45px;
+
+    margin: 12px auto 0;
+
+    background:
+        linear-gradient(
+            transparent,
+            #d4af37
+        );
+
+    animation: scrollLine 2s infinite;
+}
+
+@keyframes scrollLine {
+
+    0% {
+        transform: scaleY(0);
+        transform-origin: top;
+    }
+
+    50% {
+        transform: scaleY(1);
+        transform-origin: top;
+    }
+
+    100% {
+        transform: scaleY(0);
+        transform-origin: bottom;
+    }
+}
+
+/* =========================
+   NỘI DUNG
+========================= */
+
+.message {
+    max-width: 750px;
+}
+
+.message h2 {
+
+    font-family: 'Cormorant Garamond', serif;
+
+    font-size: clamp(40px, 7vw, 75px);
+
+    font-weight: 300;
+
+    color: #d4af37;
+
+    margin-bottom: 30px;
+}
+
+.message p {
+
+    color: #999;
+
+    font-size: 16px;
+
+    line-height: 2.1;
+
+    margin-bottom: 25px;
+}
+
+.highlight {
+
+    font-family: 'Cormorant Garamond', serif;
+
+    font-size: clamp(28px, 5vw, 50px) !important;
+
+    color: #eee !important;
+
+    font-style: italic;
+}
+
+/* =========================
+   LỜI HẸN
+========================= */
+
+.final {
+
+    min-height: 100vh;
+
+    position: relative;
+}
+
+.final-box {
+
+    max-width: 850px;
+
+    padding: 60px 30px;
+
+    border-top: 1px solid rgba(212,175,55,.3);
+    border-bottom: 1px solid rgba(212,175,55,.3);
+
+    position: relative;
+}
+
+.final-box::before,
+.final-box::after {
+
+    content: "✦";
+
+    position: absolute;
+
+    color: #d4af37;
+
+    font-size: 14px;
+}
+
+.final-box::before {
+    top: -9px;
+    left: 50%;
+}
+
+.final-box::after {
+    bottom: -9px;
+    left: 50%;
+}
+
+.final h3 {
+
+    font-family: 'Cormorant Garamond', serif;
+
+    font-size: clamp(45px, 8vw, 90px);
+
+    font-weight: 300;
+
+    color: white;
+
+    margin-bottom: 30px;
+}
+
+.final h3 span {
+    color: #d4af37;
+}
+
+.final p {
+
+    color: #777;
+
+    letter-spacing: 2px;
+
+    line-height: 2;
+}
+
+/* =========================
+   CHỮ KÝ
+========================= */
+
+.signature {
+
+    margin-top: 60px;
+
+    font-family: 'Cormorant Garamond', serif;
+
+    font-size: 28px;
+
+    color: #d4af37;
+
+    letter-spacing: 5px;
+}
+
+.year {
+
+    margin-top: 15px;
+
+    color: #444;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+}
+
+/* =========================
+   ANIMATION SCROLL
+========================= */
+
+.reveal {
+
+    opacity: 0;
+
+    transform: translateY(60px);
+
+    transition:
+        opacity 1.2s ease,
+        transform 1.2s ease;
+}
+
+.reveal.active {
+
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+@keyframes appear {
+
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px) {
+
+    .logo {
+        letter-spacing: 7px;
+    }
+
+    .subtitle {
+        letter-spacing: 3px;
+        font-size: 10px;
+    }
+
+    .message p {
+        font-size: 14px;
+    }
+
+    .final-box {
+        padding: 50px 20px;
+    }
+}
+
+</style>
 </head>
+
 <body>
 
-    <div class="card">
-        <div class="icon">✦ ✦ ✦</div>
-        <h1>Lời Tri Ân & Tạm Biệt</h1>
-        
-        <p>Hành trình của chúng tôi xin phép được khép lại tại đây. Trân trọng cảm ơn sự tin tưởng, đồng hành và tình cảm quý báu mà các bạn đã dành cho trang web trong suốt thời gian qua.</p>
-        
-        <p>Mỗi lượt truy cập, mỗi sự tương tác của bạn đều là những mảnh ghép vô giá tạo nên kỷ niệm đẹp đẽ này. Xin chúc toàn thể quý cơ quan, đối tác và các bạn luôn dồi dào sức khỏe, hạnh phúc và gặt hái được nhiều thành công rực rỡ trên con đường sắp tới.</p>
-        
-        <div class="see-you-again">Hẹn Gặp Lại Vào Một Ngày Không Xa</div>
-        
-        <div class="footer">
-            &copy; Mọi bản quyền được lưu giữ trang trọng.
+<!-- BACKGROUND -->
+
+<div class="background">
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+</div>
+
+<div class="particles" id="particles"></div>
+
+
+<!-- TRANG 1 -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="small-title">
+            A FINAL MESSAGE
         </div>
+
+        <div class="logo">
+            FGTGRAM
+        </div>
+
+        <div class="subtitle">
+            TẠM BIỆT — HẸN NGÀY TRỞ LẠI
+        </div>
+
     </div>
+
+    <div class="scroll">
+        CUỘN XUỐNG
+    </div>
+
+</section>
+
+
+<!-- TRANG 2 -->
+
+<section>
+
+    <div class="message reveal">
+
+        <h2>
+            Tạm biệt nhé...
+        </h2>
+
+        <p>
+            Có những hành trình không kết thúc
+            bởi vì chúng ta muốn dừng lại.
+        </p>
+
+        <p>
+            Đôi khi, chỉ đơn giản là đã đến lúc
+            bước chậm lại một chút.
+        </p>
+
+        <p class="highlight">
+            "Cảm ơn vì đã từng ở đây."
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- TRANG 3 -->
+
+<section>
+
+    <div class="message reveal">
+
+        <h2>
+            Cảm ơn
+        </h2>
+
+        <p>
+            Cảm ơn những người đã đồng hành cùng FGTGRAM.
+        </p>
+
+        <p>
+            Cảm ơn từng khoảnh khắc,
+            từng cuộc trò chuyện,
+            từng kỷ niệm được tạo nên nơi đây.
+        </p>
+
+        <p>
+            Những điều ấy sẽ luôn là một phần
+            của câu chuyện FGTGRAM.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- TRANG CUỐI -->
+
+<section class="final">
+
+    <div class="final-box reveal">
+
+        <h3>
+            Hẹn một ngày<br>
+            <span>trở lại.</span>
+        </h3>
+
+        <p>
+            Đây không phải là lời kết thúc.
+        </p>
+
+        <p>
+            Chỉ là một lời hẹn...
+        </p>
+
+        <div class="signature">
+            FGTGRAM
+        </div>
+
+        <div class="year">
+            SEE YOU AGAIN
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =========================
+   TẠO HẠT SÁNG
+========================= */
+
+const particleContainer =
+    document.getElementById("particles");
+
+for(let i = 0; i < 35; i++) {
+
+    const particle =
+        document.createElement("div");
+
+    particle.classList.add("particle");
+
+    particle.style.left =
+        Math.random() * 100 + "%";
+
+    particle.style.animationDelay =
+        Math.random() * 8 + "s";
+
+    particle.style.animationDuration =
+        5 + Math.random() * 8 + "s";
+
+    particleContainer.appendChild(particle);
+}
+
+
+/* =========================
+   HIỆU ỨNG KHI CUỘN
+========================= */
+
+const reveals =
+    document.querySelectorAll(".reveal");
+
+function revealOnScroll() {
+
+    reveals.forEach(element => {
+
+        const position =
+            element.getBoundingClientRect().top;
+
+        const screenHeight =
+            window.innerHeight;
+
+        if(position < screenHeight * 0.82) {
+
+            element.classList.add("active");
+
+        }
+
+    });
+
+}
+
+window.addEventListener(
+    "scroll",
+    revealOnScroll
+);
+
+revealOnScroll();
+
+
+/* =========================
+   HỖ TRỢ SWIPE CẢM ỨNG
+========================= */
+
+let touchStart = 0;
+let touchEnd = 0;
+
+document.addEventListener(
+    "touchstart",
+    function(e) {
+
+        touchStart =
+            e.changedTouches[0].screenY;
+
+    },
+    { passive: true }
+);
+
+document.addEventListener(
+    "touchend",
+    function(e) {
+
+        touchEnd =
+            e.changedTouches[0].screenY;
+
+        const distance =
+            touchStart - touchEnd;
+
+        /*
+          Chỉ hỗ trợ vuốt nhẹ để chuyển
+          sang section kế tiếp / trước đó.
+        */
+
+        if(Math.abs(distance) > 70) {
+
+            const sections =
+                document.querySelectorAll("section");
+
+            let current = 0;
+
+            sections.forEach(
+                (section, index) => {
+
+                    const rect =
+                        section.getBoundingClientRect();
+
+                    if(
+                        Math.abs(rect.top)
+                        <
+                        window.innerHeight / 2
+                    ) {
+                        current = index;
+                    }
+
+                }
+            );
+
+            if(distance > 0 && current < sections.length - 1) {
+
+                sections[current + 1]
+                    .scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+            }
+
+            if(distance < 0 && current > 0) {
+
+                sections[current - 1]
+                    .scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+            }
+
+        }
+
+    },
+    { passive: true }
+);
+
+</script>
 
 </body>
 </html>
