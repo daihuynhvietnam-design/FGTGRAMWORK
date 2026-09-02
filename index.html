@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+CEO FRT WORK <DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -721,6 +721,7 @@
       <button class="side-item active" id="sideFeed" onclick="goPage('feed')"><span class="ic">🏠</span> Bảng tin</button>
       <button class="side-item" id="sideMsg" onclick="goPage('messages')"><span class="ic">💬</span> Tin nhắn</button>
       <button class="side-item" id="sideProf" onclick="goPage('profile')"><span class="ic">👤</span> Hồ sơ</button>
+      <button class="side-item" onclick="openSettings()"><span class="ic">⚙️</span> Cài đặt</button>
       <button class="side-item" onclick="logout()"><span class="ic">🚪</span> Đăng xuất</button>
     </aside>
 
@@ -780,7 +781,10 @@
           <div class="s"><div class="n" id="stPosts">0</div><div class="l">Bài viết</div></div>
           <div class="s"><div class="n" id="stChats">0</div><div class="l">Tin nhắn</div></div>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="openSettings()">⚙️ Cài đặt</button>
+          <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+        </div>
       </div>
     </div>
   </div>
@@ -791,6 +795,41 @@
     <button class="bn-item" id="bnProf" onclick="goPage('profile')"><span class="ic">👤</span>Hồ sơ</button>
   </nav>
 </div>
+
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeSettings()">×</button>
+    <h2>Cài đặt</h2>
+    <p class="sub">Quản lý tài khoản của bạn</p>
+    <div class="fg">
+      <label>Tên hiển thị</label>
+      <input type="text" id="setName" placeholder="Tên hiển thị">
+    </div>
+    <div class="fg">
+      <label>Username</label>
+      <input type="text" id="setUser" placeholder="username" pattern="[a-zA-Z0-9_]{3,20}">
+    </div>
+    <div class="fg">
+      <label>Trạng thái hoạt động</label>
+      <div style="display:flex;align-items:center;gap:0.8rem;margin-top:0.4rem">
+        <button class="btn btn-sm" id="btnOnline" onclick="setOnline(true)" style="flex:1">🟢 Bật online</button>
+        <button class="btn btn-sm btn-ghost" id="btnOffline" onclick="setOnline(false)" style="flex:1">⚫ Tắt online</button>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-block" style="margin-top:0.8rem" onclick="saveSettings()">Lưu thay đổi</button>
+  </div>
+</div>
+
+<!-- VIEW PROFILE MODAL -->
+<div class="modal-bg" id="viewProfModal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-x" onclick="closeViewProf()">×</button>
+    <div id="viewProfContent" style="text-align:center;padding-top:0.5rem"></div>
+  </div>
+</div>
+
 
 <div class="toast" id="toast"></div>
 
@@ -868,6 +907,7 @@ async function handleAuth(e) {
 }
 
 function logout() {
+  if (sb && me) sb.from('users').update({ is_online: false, last_seen: new Date().toISOString() }).eq('id', me.id);
   me = null; curChat = null;
   localStorage.removeItem('fgt_me');
   if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
@@ -883,6 +923,8 @@ function enterApp() {
   updateNav();
   goPage('feed');
   loadUsers();
+  // Auto set online
+  if (sb && me) sb.from('users').update({ is_online: true, last_seen: new Date().toISOString() }).eq('id', me.id);
 }
 
 function updateNav() {
@@ -968,12 +1010,15 @@ async function loadPosts() {
   }
   await loadUsers();
   list.innerHTML = posts.map(p => {
-    const u = usersCache.find(x => x.id === p.user_id) || { display_name: 'User', avt: null };
+    const u = usersCache.find(x => x.id === p.user_id) || { display_name: 'User', username: '?', avt: null };
     const ini = (u.display_name || '?').charAt(0).toUpperCase();
     const av = u.avt ? '<img src="' + u.avt + '">' : ini;
     const liked = (p.likes || []).includes(me.id);
     const lc = (p.likes || []).length;
-    return '<div class="post"><div class="post-head"><div class="av">' + av + '</div><div><div class="name">' + esc(u.display_name) + '</div><div class="time">' + timeAgo(p.created_at) + '</div></div></div><div class="post-body">' + esc(p.content) + '</div>' + (p.image ? '<img class="post-img" src="' + p.image + '">' : '') + '<div class="post-stats"><span>' + lc + ' thích</span></div><div class="post-actions"><button class="post-act ' + (liked ? 'liked' : '') + '" onclick="toggleLike(\'' + p.id + '\')">' + (liked ? '❤️' : '🤍') + ' Thích</button></div></div>';
+    const isMine = p.user_id === me.id;
+    const body = formatHashtags(esc(p.content));
+    const delBtn = isMine ? '<button class="post-act" onclick="deletePost(\'' + p.id + '\')" style="color:var(--danger)">🗑️ Xóa</button>' : '';
+    return '<div class="post"><div class="post-head"><div class="av" onclick="viewProfile(\'' + p.user_id + '\')" style="cursor:pointer">' + av + '</div><div><div class="name" onclick="viewProfile(\'' + p.user_id + '\')" style="cursor:pointer">' + esc(u.display_name) + '</div><div class="time">' + timeAgo(p.created_at) + (u.is_online ? ' · <span style="color:var(--success)">● Online</span>' : '') + '</div></div></div><div class="post-body">' + body + '</div>' + (p.image ? '<img class="post-img" src="' + p.image + '">' : '') + '<div class="post-stats"><span>' + lc + ' thích</span></div><div class="post-actions"><button class="post-act ' + (liked ? 'liked' : '') + '" onclick="toggleLike(\'' + p.id + '\')">' + (liked ? '❤️' : '🤍') + ' Thích</button>' + delBtn + '</div></div>';
   }).join('');
 }
 
@@ -991,7 +1036,7 @@ async function toggleLike(postId) {
 /* SEARCH + CHAT */
 async function loadUsers() {
   if (!sb) return;
-  const { data } = await sb.from('users').select('id, display_name, username, avt');
+  const { data } = await sb.from('users').select('id, display_name, username, avt, is_online');
   usersCache = data || [];
 }
 
@@ -1168,6 +1213,127 @@ function toast(msg) {
   t.className = 'toast show';
   setTimeout(() => t.classList.remove('show'), 2800);
 }
+
+
+/* ===== NEW FEATURES ===== */
+function formatHashtags(text) {
+  return text.replace(/#(\w+)/g, '<span style="color:var(--accent2);font-weight:600">#$1</span>');
+}
+
+async function deletePost(postId) {
+  if (!confirm('Xóa bài viết này? Không thể hoàn tác!')) return;
+  const { error } = await sb.from('posts').delete().eq('id', postId).eq('user_id', me.id);
+  if (error) { toast('Lỗi xóa bài'); return; }
+  toast('Đã xóa bài viết');
+  loadPosts();
+}
+
+function openSettings() {
+  document.getElementById('setName').value = me.display_name || '';
+  document.getElementById('setUser').value = me.username || '';
+  document.getElementById('settingsModal').classList.add('show');
+}
+function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
+
+async function saveSettings() {
+  const name = document.getElementById('setName').value.trim();
+  const user = document.getElementById('setUser').value.trim().toLowerCase();
+  if (!name || !user) { toast('Không được để trống'); return; }
+  if (user !== me.username) {
+    const { data: exist } = await sb.from('users').select('id').eq('username', user).maybeSingle();
+    if (exist) { toast('Username đã có người dùng'); return; }
+  }
+  const { error } = await sb.from('users').update({ display_name: name, username: user }).eq('id', me.id);
+  if (error) { toast('Lỗi lưu: ' + error.message); return; }
+  me.display_name = name;
+  me.username = user;
+  localStorage.setItem('fgt_me', JSON.stringify(me));
+  updateNav();
+  closeSettings();
+  toast('Đã lưu cài đặt');
+}
+
+async function setOnline(on) {
+  if (!sb || !me) return;
+  await sb.from('users').update({ is_online: on, last_seen: new Date().toISOString() }).eq('id', me.id);
+  me.is_online = on;
+  localStorage.setItem('fgt_me', JSON.stringify(me));
+  toast(on ? 'Đã bật trạng thái Online' : 'Đã tắt Online');
+}
+
+async function viewProfile(userId) {
+  await loadUsers();
+  const u = usersCache.find(x => x.id === userId);
+  if (!u) { toast('Không tìm thấy user'); return; }
+  const { data: full } = await sb.from('users').select('*').eq('id', userId).single();
+  const user = full || u;
+  const ini = (user.display_name || '?').charAt(0).toUpperCase();
+  const avHtml = user.avt
+    ? '<img src="'+user.avt+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--border)">'
+    : '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;margin:0 auto">'+ini+'</div>';
+  const online = user.is_online
+    ? '<span style="color:var(--success);font-size:0.85rem">● Đang hoạt động</span>'
+    : '<span style="color:var(--muted);font-size:0.85rem">● Offline</span>';
+  const isMe = userId === me.id;
+  let friendBtn = '';
+  if (!isMe) {
+    const { data: fr } = await sb.from('friends').select('*')
+      .or('and(user_id.eq.'+me.id+',friend_id.eq.'+userId+'),and(user_id.eq.'+userId+',friend_id.eq.'+me.id+')')
+      .maybeSingle();
+    if (fr && fr.status === 'accepted') {
+      friendBtn = '<button class="btn btn-danger btn-sm" onclick="unfriend(\''+userId+'\')">Hủy kết bạn</button>';
+    } else if (fr && fr.status === 'pending' && fr.user_id === me.id) {
+      friendBtn = '<button class="btn btn-ghost btn-sm" disabled>Đã gửi lời mời</button>';
+    } else if (fr && fr.status === 'pending' && fr.friend_id === me.id) {
+      friendBtn = '<button class="btn btn-primary btn-sm" onclick="acceptFriend(\''+fr.id+'\')">Chấp nhận kết bạn</button>';
+    } else {
+      friendBtn = '<button class="btn btn-primary btn-sm" onclick="addFriend(\''+userId+'\')">Kết bạn</button>';
+    }
+  }
+  const chatBtn = isMe ? '' : '<button class="btn btn-outline btn-sm" onclick="closeViewProf();startChat(\''+userId+'\')">💬 Nhắn tin</button>';
+  document.getElementById('viewProfContent').innerHTML =
+    '<div style="margin-bottom:0.8rem">'+avHtml+'</div>' +
+    '<div style="font-weight:700;font-size:1.2rem;margin-bottom:0.2rem">'+esc(user.display_name)+'</div>' +
+    '<div style="color:var(--muted);font-size:0.9rem;margin-bottom:0.4rem">@'+user.username+'</div>' +
+    '<div style="margin-bottom:1rem">'+online+'</div>' +
+    '<div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">'+friendBtn+chatBtn+'</div>';
+  document.getElementById('viewProfModal').classList.add('show');
+}
+function closeViewProf() { document.getElementById('viewProfModal').classList.remove('show'); }
+
+async function addFriend(friendId) {
+  const { error } = await sb.from('friends').insert({ user_id: me.id, friend_id: friendId, status: 'pending' });
+  if (error) { toast(error.message.includes('unique') ? 'Đã gửi rồi' : 'Lỗi: '+error.message); return; }
+  toast('Đã gửi lời mời kết bạn');
+  closeViewProf();
+}
+async function acceptFriend(frId) {
+  await sb.from('friends').update({ status: 'accepted' }).eq('id', frId);
+  toast('Đã trở thành bạn bè');
+  closeViewProf();
+}
+async function unfriend(friendId) {
+  if (!confirm('Hủy kết bạn?')) return;
+  await sb.from('friends').delete().or('and(user_id.eq.'+me.id+',friend_id.eq.'+friendId+'),and(user_id.eq.'+friendId+',friend_id.eq.'+me.id+')');
+  toast('Đã hủy kết bạn');
+  closeViewProf();
+}
+
+async function leaveGroup(chatId) {
+  if (!confirm('Rời nhóm này?')) return;
+  const { data: c } = await sb.from('chats').select('*').eq('id', chatId).single();
+  if (!c) return;
+  const members = (c.members || []).filter(id => id !== me.id);
+  if (members.length === 0) {
+    await sb.from('messages').delete().eq('chat_id', chatId);
+    await sb.from('chats').delete().eq('id', chatId);
+  } else {
+    await sb.from('chats').update({ members }).eq('id', chatId);
+  }
+  toast('Đã rời nhóm');
+  showMsgList();
+}
+
 
 window.addEventListener('DOMContentLoaded', () => {
   const s = localStorage.getItem('fgt_me');
